@@ -1,19 +1,18 @@
 #pragma once
 
 #include "base.hpp"
-#include <string.h>
+
+#include <string>
 #include <thread>
-#include <future>
 
 class UDPSocket : public BaseSocket {
     public:
         std::function<void(const uint8_t*, int, std::string, std::uint16_t)> onRawMessageReceived;
 
-        explicit UDPSocket(bool isServer = true, FDR_ON_ERROR, int socketId = -1): BaseSocket(onError, socketId) {
-            this->isServer = isServer;
+        explicit UDPSocket(FDR_ON_ERROR, int socketId = -1): BaseSocket(onError, socketId) {
 
-            std::thread t(ReceiveFrom, this);
-            t.detach();
+            std::thread socketThread(ReceiveFrom, this);
+            socketThread.detach();
         }
         
         void SendTo(const uint8_t *bytes, size_t byteslength, std::string host, uint16_t port, FDR_ON_ERROR) {
@@ -63,21 +62,9 @@ class UDPSocket : public BaseSocket {
                 if (messageLength < 0) {
                     perror("recvfrom");
                     return;
-                }
-                else {
+                } else {
                     tempBuffer[messageLength] = '\0';
-
-                    if (udpSocket->onRawMessageReceived) {
-                        if(udpSocket->isServer) {
-                            std::thread t1([&] {
-                                udpSocket->onRawMessageReceived(tempBuffer, messageLength, ipToString(hostAddr), ntohs(hostAddr.sin_port));
-                            });
-                            t1.detach();
-                            //udpSocket->onRawMessageReceived(tempBuffer, messageLength, ipToString(hostAddr), ntohs(hostAddr.sin_port));
-                        } else {
-                            udpSocket->onRawMessageReceived(tempBuffer, messageLength, ipToString(hostAddr), ntohs(hostAddr.sin_port));
-                        }
-                    }
+                    if (udpSocket->onRawMessageReceived) udpSocket->onRawMessageReceived(tempBuffer, messageLength, ipToString(hostAddr), ntohs(hostAddr.sin_port));
                 }
             }
         }

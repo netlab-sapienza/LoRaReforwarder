@@ -10,14 +10,16 @@
 #define PKT_PULL_ACK     4
 
 #include "packet.hpp"
+#include <string>
 
 namespace lorareforwarder::packet {
     class LoRaPacketParser {
         public:
-            LoRaPacketParser() = default;
+            explicit LoRaPacketParser() = default;
             ~LoRaPacketParser() = default;
 
             static LoRaPacket parse(const uint8_t *packet_buf, size_t length);
+            static std::string getPacketType(const uint8_t buf);
         private:
             
     };

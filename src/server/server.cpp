@@ -5,7 +5,6 @@
 #include <errno.h>
 #include <string>
 
-#include "packet/packet.hpp"
 #include "packet/packetParser.hpp"
 #include "socket/server.hpp"
 #include "server.hpp"
@@ -20,30 +19,18 @@ namespace lorareforwarder::server {
     void LoRaServer::init(uint16_t port) {
         UDPServer udpServer;
 
-        UDPSocket socket(false, [](int errorCode, std::__1::string errorMessage) {
+        UDPSocket socket([](int errorCode, std::__1::string errorMessage) {
             std::cout << errorCode << " : " << errorMessage << std::endl;
         });
 
-        // AGGIUNGERE CONTROLLO DI CONSISTENZA PACCHETTO
-        udpServer.onRawMessageReceived = [&](const uint8_t* message, int length, std::string ipv4, uint16_t port) {
-            std::cout << ipv4 << ":" << port << " => " << message << "(" << length << ")" << std::endl;
+        udpServer.onRawMessageReceived = [&](const uint8_t* message, int length, std::string ipv4, uint16_t port)  {
+            std::cout << ipv4 << ":" << port << " => " << message << "(" << length << ")" << " => " << packet::LoRaPacketParser::getPacketType(message[3]) << std::endl;
             socket.SendTo(message, length, "localhost", 1700);
 
-            bool exit = false;
-            // AGGIUNGERE CONTROLLO DI CONSISTENZA PACCHETTO
             socket.onRawMessageReceived = [&](const uint8_t* servermessage, int serverlength, std::string serveripv4, uint16_t serverport) {
-                std::cout << "SERVER " << serveripv4 << ":" << serverport << " => " << servermessage << "(" << serverlength << ")" << std::endl;                
+                std::cout << "SERVER " << serveripv4 << ":" << serverport << " => " << servermessage << "(" << serverlength << ")" << " => " << packet::LoRaPacketParser::getPacketType(servermessage[3]) << std::endl;                
                 udpServer.SendTo(servermessage, serverlength, ipv4, port);
-
-                // AGGIUNGERE CONTROLLO SUL PULL_DATA, DEVE CHIUDERE IL THREAD SOLO QUANDO HA RICEVUTO I DATI CHE RICHIEDEVA
-                if (servermessage[3] != 2)
-                    exit = true;
             };
-
-            while(!exit) { }
-
-            socket.onRawMessageReceived = NULL;
-            return;
         };
         
         udpServer.Bind(port, [](int errorCode, std::string errorMessage) {

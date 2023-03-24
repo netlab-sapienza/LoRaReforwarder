@@ -8,13 +8,14 @@
 #define PKT_PULL_DATA    2
 #define PKT_PULL_RESP    3
 #define PKT_PULL_ACK     4
+#define PKT_TX_ACK       5
 
 #include <stdlib.h>
 
 namespace lorareforwarder::packet {
     class LoRaPacket {
         public:
-            LoRaPacket() = default;
+            explicit LoRaPacket() = default;
             ~LoRaPacket() = default;
 
             const uint8_t *buf;
