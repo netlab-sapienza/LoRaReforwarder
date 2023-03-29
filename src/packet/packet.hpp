@@ -14,7 +14,24 @@
 #include <mariadb++/types.hpp>
 
 namespace lorareforwarder::packet {
-    enum Modulation {LORA, FSK};
+    typedef struct {
+        bool imme;
+        mariadb::u64 tmst;
+        mariadb::u64 tmms;
+        mariadb::f32 freq;
+        mariadb::u32 rfch;
+        mariadb::u32 powe;
+        std::string modu;
+        std::string datrid;
+        mariadb::u32 datr;
+        std::string codr;
+        mariadb::u32 fdev;
+        bool ipol;
+        mariadb::u32 prea;
+        mariadb::u32 size;
+        std::string data;
+        bool ncrc;
+    } txpk;
 
     typedef struct {
         std::string time;
@@ -54,6 +71,7 @@ namespace lorareforwarder::packet {
 
             const uint8_t *buf;
             size_t length;
+            uint8_t type;
 
             uint32_t raw_mac_h; /* Most Significant Nibble, network order */
             uint32_t raw_mac_l; /* Least Significant Nibble, network order */
@@ -62,6 +80,7 @@ namespace lorareforwarder::packet {
             uint8_t ack_command;
 
             rxpk** rxpk_buf;
+            txpk* txpk_buf;
             stat* stat_buf;
 
             bool isValid = true;

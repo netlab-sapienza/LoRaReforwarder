@@ -63,27 +63,57 @@ namespace lorareforwarder::packet {
 
         /* interpret gateway command */
 
-        if(packet_buf[3] == PKT_PUSH_DATA) {
-            printf("PUSH_DATA from gateway 0x%08X%08X\n", (uint32_t)(packet->gw_mac >> 32), (uint32_t)(packet->gw_mac & 0xFFFFFFFF));
-            packet->ack_command = PKT_PUSH_ACK;
-            printf("<-  pkt out, PUSH_ACK for host");            
+        switch(packet_buf[3]) {
+            case PKT_PUSH_DATA: {
+                packet->type = PKT_PUSH_DATA;
+                printf("PUSH_DATA from gateway 0x%08X%08X\n", (uint32_t)(packet->gw_mac >> 32), (uint32_t)(packet->gw_mac & 0xFFFFFFFF));
+                packet->ack_command = PKT_PUSH_ACK;
 
-            char* string = (char*) (packet_buf + 12);
-            printf("La stringa che contiene e' %s\n", string);
-            parseJson(string, packet);
-        } else if(packet_buf[3] == PKT_PULL_DATA) {
-            printf(", PULL_DATA from gateway 0x%08X%08X\n", (uint32_t)(packet->gw_mac >> 32), (uint32_t)(packet->gw_mac & 0xFFFFFFFF));
-            packet->ack_command = PKT_PULL_ACK;
-            printf("<-  pkt out, PULL_ACK for host");
-        } else {
-            printf(", unexpected command %u\n", packet_buf[3]);
-            packet->isValid = false;
-        }          
+                char* string = (char*) (packet_buf + 12);
+                printf("La stringa che contiene e' %s\n", string);
+                parsePushJson(string, packet);
+                break;
+            }
+            case PKT_PUSH_ACK: {
+                packet->type = PKT_PUSH_ACK;
+                break;
+            }
+            case PKT_PULL_DATA: {
+                packet->type = PKT_PULL_DATA;
+
+                printf(", PULL_DATA from gateway 0x%08X%08X\n", (uint32_t)(packet->gw_mac >> 32), (uint32_t)(packet->gw_mac & 0xFFFFFFFF));
+                packet->ack_command = PKT_PULL_ACK;
+                printf("<-  pkt out, PULL_ACK for host");
+                break;
+            }
+            case PKT_PULL_RESP: {
+                packet->type = PKT_PULL_RESP;
+
+                char* string = (char*) (packet_buf + 4);
+                printf("La stringa che contiene e' %s\n", string);
+                parsePullJson(string, packet);
+                break;
+            }
+            case PKT_PULL_ACK: {
+                packet->type = PKT_PULL_ACK;
+
+                break;
+            }
+            case PKT_TX_ACK: {
+                packet->type = PKT_TX_ACK;
+
+                break;
+            }
+            default: {
+                printf(", unexpected command %u\n", packet_buf[3]);
+                packet->isValid = false;
+            }
+        };  
     
         return packet;
     }
 
-    void LoRaPacketParser::parseJson(const char *string, LoRaPacket* packet) {
+    void LoRaPacketParser::parsePushJson(const char *string, LoRaPacket* packet) {
         json packjson = json::parse(string);
         std::cout << "rxpk: " << packjson["rxpk"] << std::endl;
         std::cout << "stat: " << packjson["stat"] << std::endl;
@@ -124,6 +154,83 @@ namespace lorareforwarder::packet {
             packet->stat_buf->ackr = packjson["stat"]["ackr"];
             packet->stat_buf->dwnb = packjson["stat"]["dwnb"];
             packet->stat_buf->txnb = packjson["stat"]["txnb"];
+        }
+    }
+
+    void LoRaPacketParser::parsePullJson(const char *string, LoRaPacket* packet) {
+        json packjson = json::parse(string);
+        std::cout << "txpk: " << packjson["txpk"] << std::endl;
+
+        if(!packjson["txpk"].is_null()) {
+            packet->txpk_buf = (txpk*) malloc(sizeof(txpk));
+
+            if(packjson["txpk"]["imme"].is_null())
+                packet->txpk_buf->imme = false;
+            else
+                packet->txpk_buf->imme = packjson["txpk"]["imme"];
+
+            if(packjson["txpk"]["tmst"].is_null())
+                packet->txpk_buf->tmst = mariadb::value::null;
+            else
+                packet->txpk_buf->tmst = packjson["txpk"]["tmst"];
+
+            if(packjson["txpk"]["tmms"].is_null())
+                packet->txpk_buf->tmms = mariadb::value::null;
+            else
+                packet->txpk_buf->tmms = packjson["txpk"]["tmms"];
+
+            if(packjson["txpk"]["freq"].is_null())
+                packet->txpk_buf->freq = mariadb::value::null;
+            else
+                packet->txpk_buf->freq = packjson["txpk"]["freq"];
+
+            if(packjson["txpk"]["rfch"].is_null())
+                packet->txpk_buf->rfch = mariadb::value::null;
+            else
+                packet->txpk_buf->rfch = packjson["txpk"]["rfch"];
+
+            if(packjson["txpk"]["powe"].is_null())
+                packet->txpk_buf->powe = mariadb::value::null;
+            else
+                packet->txpk_buf->powe = packjson["txpk"]["powe"];
+            
+            packet->txpk_buf->modu = packjson["txpk"]["modu"].is_null() ? "" : packjson["txpk"]["modu"];
+
+            packet->txpk_buf->datrid = packjson["txpk"]["datrid"].is_null() ? "" : packjson["txpk"]["datrid"];
+
+            if(packjson["txpk"]["datr"].is_null()) // TODO Protocol documentation check
+                packet->txpk_buf->datr = mariadb::value::null;
+            else
+                packet->txpk_buf->data = packjson["txpk"]["datr"];
+            
+            packet->txpk_buf->codr = packjson["txpk"]["codr"].is_null() ? "" : packjson["txpk"]["codr"];
+
+            if(packjson["txpk"]["fdev"].is_null())
+                packet->txpk_buf->fdev = mariadb::value::null;
+            else
+                packet->txpk_buf->fdev = packjson["txpk"]["fdev"];
+
+            if(packjson["txpk"]["ipol"].is_null())
+                packet->txpk_buf->ipol = mariadb::value::null;
+            else
+                packet->txpk_buf->ipol = packjson["txpk"]["ipol"];
+
+            if(packjson["txpk"]["prea"].is_null())
+                packet->txpk_buf->prea = mariadb::value::null;
+            else
+                packet->txpk_buf->prea = packjson["txpk"]["prea"];
+
+            if(packjson["txpk"]["size"].is_null())
+                packet->txpk_buf->size = mariadb::value::null;
+            else
+                packet->txpk_buf->size = packjson["txpk"]["size"];
+
+            packet->txpk_buf->data = packjson["txpk"]["data"].is_null() ? "" : packjson["txpk"]["data"];
+
+            if(packjson["txpk"]["ncrc"].is_null())
+                packet->txpk_buf->ncrc = false;
+            else
+                packet->txpk_buf->ncrc = packjson["txpk"]["ncrc"];
         }
     }
 }

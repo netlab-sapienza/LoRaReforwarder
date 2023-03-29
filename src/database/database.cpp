@@ -22,9 +22,6 @@ namespace lorareforwarder::database {
         snprintf(macStr, sizeof(macStr), "%08X%08X", (uint32_t)(packet->gw_mac >> 32), (uint32_t)(packet->gw_mac & 0xFFFFFFFF));
         std::string str(macStr);
 
-        std::cout << "CIao: " << str << std::endl;
-
-
         mariadb::s64 statid = -1;
         if(packet->stat_buf) {
             mariadb::statement_ref stmt = con->create_statement("INSERT INTO pushStats (id, time, lati, longi, alti, rxnb, rxok, rxfw, ackr, dwnb, txnb) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
@@ -69,10 +66,42 @@ namespace lorareforwarder::database {
 
                 free(packet->rxpk_buf[0]);
             }
+            
             free(packet->rxpk_buf);
-            free(packet);
+            return 0;
         }
 
-        return 0;
+        free(packet);
+        return -1;
+    }
+
+    int Database::insertPullDataPacket(packet::LoRaPacket* packet) {
+        if(packet->txpk_buf) {
+            mariadb::statement_ref stmt = con->create_statement("INSERT INTO pullPackets (id, imme, tmst, tmms, freq, rfch, powe, modu, datrid, datr, codr, fdev, ipol, prea, size, data, ncrc) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+            stmt->set_boolean(1, packet->txpk_buf->imme);
+            stmt->set_unsigned64(2, packet->txpk_buf->tmst);
+            stmt->set_unsigned64(3, packet->txpk_buf->tmms);
+            stmt->set_float(4, packet->txpk_buf->freq);
+            stmt->set_unsigned32(5, packet->txpk_buf->rfch);
+            stmt->set_unsigned32(6, packet->txpk_buf->powe);
+            stmt->set_string(7, packet->txpk_buf->modu);
+            stmt->set_string(8, packet->txpk_buf->datrid);
+            stmt->set_unsigned32(9, packet->txpk_buf->datr);
+            stmt->set_string(10, packet->txpk_buf->codr);
+            stmt->set_unsigned32(11, packet->txpk_buf->fdev);
+            stmt->set_boolean(12, packet->txpk_buf->ipol);
+            stmt->set_unsigned32(13, packet->txpk_buf->prea);
+            stmt->set_unsigned32(14, packet->txpk_buf->size);
+            stmt->set_string(15, packet->txpk_buf->data);
+            stmt->set_boolean(16, packet->txpk_buf->ncrc);
+            stmt->insert();
+
+            free(packet->txpk_buf);
+            return 0;
+        }
+
+        free(packet);
+        return -1;
     }
 }

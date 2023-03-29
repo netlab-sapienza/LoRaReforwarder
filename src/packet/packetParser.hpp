@@ -14,7 +14,8 @@ namespace lorareforwarder::packet {
             static std::string getPacketType(const uint8_t buf);
 
         private:
-            static void parseJson(const char *string, LoRaPacket* packet);
+            static void parsePushJson(const char *string, LoRaPacket* packet);
+            static void parsePullJson(const char *string, LoRaPacket* packet);
 
     };
 }

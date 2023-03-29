@@ -15,8 +15,13 @@ namespace lorareforwarder::database {
             ~Database();
             
             int insertPushDataPacket(packet::LoRaPacket* packet);
+            int insertPullDataPacket(packet::LoRaPacket* packet);
+
             static int insertPushDataPacketStatic(Database& db, packet::LoRaPacket* packet) {
                 return db.insertPushDataPacket(packet);
+            }
+            static int insertPullDataPacketStatic(Database& db, packet::LoRaPacket* packet) {
+                return db.insertPullDataPacket(packet);
             }
         private:
             mariadb::account_ref acc;
