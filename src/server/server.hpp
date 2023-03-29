@@ -1,13 +1,16 @@
 #ifndef LORAREFORWARDER_SERVER_HPP
 #define LORAREFORWARDER_SERVER_HPP
 
+#include "database/database.hpp"
+
 namespace lorareforwarder::server {
     class LoRaServer {
         public:
-            explicit LoRaServer(uint16_t port);
+            explicit LoRaServer(uint16_t port, database::Database& _database);
             ~LoRaServer();
 
         private:
+            database::Database& database;
             static const int BUFFER_SIZE = 4096;
 
             void init(uint16_t port);
