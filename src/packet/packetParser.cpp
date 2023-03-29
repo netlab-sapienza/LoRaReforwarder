@@ -88,24 +88,27 @@ namespace lorareforwarder::packet {
         std::cout << "rxpk: " << packjson["rxpk"] << std::endl;
         std::cout << "stat: " << packjson["stat"] << std::endl;
 
-        if(!packjson["rxpk"].is_null()) {
-            packet->rxpk_buf = (rxpk*) malloc(sizeof(rxpk));
+        if(!packjson["rxpk"].is_null() && packjson["rxpk"].is_array()) {
+            packet->rxpk_buf = (rxpk**) malloc(packjson["rxpk"].size() * sizeof(rxpk*));
+            for(int i = 0; i < packjson["rxpk"].size(); i++) {
+                packet->rxpk_buf[i] = (rxpk*) malloc(sizeof(rxpk));
 
-            packet->rxpk_buf->time = packjson["rxpk"][0]["time"];
-            packet->rxpk_buf->tmms = packjson["rxpk"][0]["tmms"];
-            packet->rxpk_buf->tmst = packjson["rxpk"][0]["tmst"];
-            packet->rxpk_buf->chan = packjson["rxpk"][0]["chan"];
-            packet->rxpk_buf->rfch = packjson["rxpk"][0]["rfch"];
-            packet->rxpk_buf->stat = packjson["rxpk"][0]["stat"];
-            packet->rxpk_buf->freq = packjson["rxpk"][0]["freq"];
-            packet->rxpk_buf->datr = packjson["rxpk"][0]["brd"]; // DA VERIFICARE
-            packet->rxpk_buf->rssi = packjson["rxpk"][0]["rssi"];
-            packet->rxpk_buf->datrid = packjson["rxpk"][0]["datr"];
-            packet->rxpk_buf->modu = packjson["rxpk"][0]["modu"]; // DA VEFIRIFICARE SU DB
-            packet->rxpk_buf->codr = packjson["rxpk"][0]["codr"];
-            packet->rxpk_buf->lsnr = packjson["rxpk"][0]["lsnr"];
-            packet->rxpk_buf->size = packjson["rxpk"][0]["size"];
-            packet->rxpk_buf->data = packjson["rxpk"][0]["data"];
+                packet->rxpk_buf[i]->time = packjson["rxpk"][i]["time"];
+                packet->rxpk_buf[i]->tmms = packjson["rxpk"][i]["tmms"];
+                packet->rxpk_buf[i]->tmst = packjson["rxpk"][i]["tmst"];
+                packet->rxpk_buf[i]->chan = packjson["rxpk"][i]["chan"];
+                packet->rxpk_buf[i]->rfch = packjson["rxpk"][i]["rfch"];
+                packet->rxpk_buf[i]->stat = packjson["rxpk"][i]["stat"];
+                packet->rxpk_buf[i]->freq = packjson["rxpk"][i]["freq"];
+                packet->rxpk_buf[i]->datr = packjson["rxpk"][i]["brd"]; // DA VERIFICARE
+                packet->rxpk_buf[i]->rssi = packjson["rxpk"][i]["rssi"];
+                packet->rxpk_buf[i]->datrid = packjson["rxpk"][i]["datr"];
+                packet->rxpk_buf[i]->modu = packjson["rxpk"][i]["modu"]; // DA VEFIRIFICARE SU DB
+                packet->rxpk_buf[i]->codr = packjson["rxpk"][i]["codr"];
+                packet->rxpk_buf[i]->lsnr = packjson["rxpk"][i]["lsnr"];
+                packet->rxpk_buf[i]->size = packjson["rxpk"][i]["size"];
+                packet->rxpk_buf[i]->data = packjson["rxpk"][i]["data"];
+            }
         }
 
         if(!packjson["stat"].is_null()) {

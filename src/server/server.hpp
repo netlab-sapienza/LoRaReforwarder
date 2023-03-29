@@ -14,7 +14,6 @@ namespace lorareforwarder::server {
             static const int BUFFER_SIZE = 4096;
 
             void init(uint16_t port);
-            static void* connection_handler(void* arg);
 
             typedef struct {
                 void *socket_desc;

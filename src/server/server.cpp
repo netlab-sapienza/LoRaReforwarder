@@ -47,8 +47,4 @@ namespace lorareforwarder::server {
             std::getline(std::cin, input);
         }
     }
-
-    void* LoRaServer::connection_handler(void* thread_data) {
-
-    }
 }

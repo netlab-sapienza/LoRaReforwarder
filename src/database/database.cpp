@@ -44,26 +44,34 @@ namespace lorareforwarder::database {
             std::cout << "Inserito: " << statid << std::endl;
         }
 
-        mariadb::statement_ref stmt = con->create_statement("INSERT INTO pushPackets (id, gwui, time, tmms, tmst, freq, chan, rfch, stat, modu, datrid, datr, codr, rssi, lsnr, size, data, statId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        if(packet->rxpk_buf) {
+            mariadb::statement_ref stmt = con->create_statement("INSERT INTO pushPackets (id, gwui, time, tmms, tmst, freq, chan, rfch, stat, modu, datrid, datr, codr, rssi, lsnr, size, data, statId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-        stmt->set_string(1, macStr);
-        stmt->set_string(2, packet->rxpk_buf->time);
-        stmt->set_unsigned64(3, packet->rxpk_buf->tmms);
-        stmt->set_unsigned32(4, packet->rxpk_buf->tmst);
-        stmt->set_float(5, packet->rxpk_buf->freq);
-        stmt->set_unsigned32(6, packet->rxpk_buf->chan);
-        stmt->set_unsigned32(7, packet->rxpk_buf->rfch);
-        stmt->set_signed16(8, packet->rxpk_buf->stat); // DA VERIFICARE
-        stmt->set_string(9, packet->rxpk_buf->modu);
-        stmt->set_string(10, packet->rxpk_buf->datrid);
-        stmt->set_unsigned32(11, packet->rxpk_buf->datr);
-        stmt->set_string(12, packet->rxpk_buf->codr);
-        stmt->set_signed32(13, packet->rxpk_buf->rssi);
-        stmt->set_float(14, packet->rxpk_buf->lsnr);
-        stmt->set_unsigned32(15, packet->rxpk_buf->size);
-        stmt->set_string(16, packet->rxpk_buf->data);
-        if(statid > -1) stmt->set_unsigned64(17, statid);
-        stmt->insert();
+            for(int i = 0; i < sizeof(packet->rxpk_buf)/sizeof(packet->rxpk_buf[0]); i++) {
+                stmt->set_string(1, macStr);
+                stmt->set_string(2, packet->rxpk_buf[i]->time);
+                stmt->set_unsigned64(3, packet->rxpk_buf[i]->tmms);
+                stmt->set_unsigned32(4, packet->rxpk_buf[i]->tmst);
+                stmt->set_float(5, packet->rxpk_buf[i]->freq);
+                stmt->set_unsigned32(6, packet->rxpk_buf[i]->chan);
+                stmt->set_unsigned32(7, packet->rxpk_buf[i]->rfch);
+                stmt->set_signed16(8, packet->rxpk_buf[i]->stat);
+                stmt->set_string(9, packet->rxpk_buf[i]->modu);
+                stmt->set_string(10, packet->rxpk_buf[i]->datrid);
+                stmt->set_unsigned32(11, packet->rxpk_buf[i]->datr);
+                stmt->set_string(12, packet->rxpk_buf[i]->codr);
+                stmt->set_signed32(13, packet->rxpk_buf[i]->rssi);
+                stmt->set_float(14, packet->rxpk_buf[i]->lsnr);
+                stmt->set_unsigned32(15, packet->rxpk_buf[i]->size);
+                stmt->set_string(16, packet->rxpk_buf[i]->data);
+                if(statid > -1) stmt->set_unsigned64(17, statid);
+                stmt->insert();
+
+                free(packet->rxpk_buf[0]);
+            }
+            free(packet->rxpk_buf);
+            free(packet);
+        }
 
         return 0;
     }

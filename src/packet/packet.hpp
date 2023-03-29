@@ -61,7 +61,7 @@ namespace lorareforwarder::packet {
 
             uint8_t ack_command;
 
-            rxpk* rxpk_buf;
+            rxpk** rxpk_buf;
             stat* stat_buf;
 
             bool isValid = true;
