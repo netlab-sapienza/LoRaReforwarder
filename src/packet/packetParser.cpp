@@ -100,10 +100,10 @@ namespace lorareforwarder::packet {
                 packet->rxpk_buf[i]->rfch = packjson["rxpk"][i]["rfch"];
                 packet->rxpk_buf[i]->stat = packjson["rxpk"][i]["stat"];
                 packet->rxpk_buf[i]->freq = packjson["rxpk"][i]["freq"];
-                packet->rxpk_buf[i]->datr = packjson["rxpk"][i]["brd"]; // DA VERIFICARE
+                packet->rxpk_buf[i]->datr = packjson["rxpk"][i]["brd"]; // TODO Protocol documentation check
                 packet->rxpk_buf[i]->rssi = packjson["rxpk"][i]["rssi"];
                 packet->rxpk_buf[i]->datrid = packjson["rxpk"][i]["datr"];
-                packet->rxpk_buf[i]->modu = packjson["rxpk"][i]["modu"]; // DA VEFIRIFICARE SU DB
+                packet->rxpk_buf[i]->modu = packjson["rxpk"][i]["modu"]; // TODO DB check
                 packet->rxpk_buf[i]->codr = packjson["rxpk"][i]["codr"];
                 packet->rxpk_buf[i]->lsnr = packjson["rxpk"][i]["lsnr"];
                 packet->rxpk_buf[i]->size = packjson["rxpk"][i]["size"];

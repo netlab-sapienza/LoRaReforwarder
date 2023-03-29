@@ -1,4 +1,5 @@
-#pragma once
+#ifndef LORAREFORWARDER_SOCKETSERVER_HPP
+#define LORAREFORWARDER_SOCKETSERVER_HPP
 
 #include "socket.hpp"
 #include <thread>
@@ -32,3 +33,5 @@ class UDPServer : public UDPSocket {
             }
         }
 };
+
+#endif /* LORAREFORWARDER_SOCKETSERVER_HPP */

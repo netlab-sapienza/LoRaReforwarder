@@ -1,4 +1,5 @@
-#pragma once
+#ifndef LORAREFORWARDER_SOCKETBASE_HPP
+#define LORAREFORWARDER_SOCKETBASE_HPP
 
 #include <arpa/inet.h>
 #include <sys/socket.h>
@@ -57,3 +58,5 @@ class BaseSocket {
             return this->sock;
         }
 };
+
+#endif /* LORAREFORWARDER_SOCKETBASE_HPP */

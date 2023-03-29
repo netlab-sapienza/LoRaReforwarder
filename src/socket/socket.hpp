@@ -1,4 +1,5 @@
-#pragma once
+#ifndef LORAREFORWARDER_SOCKET_HPP
+#define LORAREFORWARDER_SOCKET_HPP
 
 #include "base.hpp"
 
@@ -32,7 +33,7 @@ class UDPSocket : public BaseSocket {
             for (it = res; it != NULL; it = it->ai_next) {
                 if (it->ai_family == AF_INET) { // IPv4
                     memcpy((void *)(&hostAddr), (void *)it->ai_addr, sizeof(sockaddr_in));
-                    break; // for now, just get first ip (ipv4).
+                    break;
                 }
             }
 
@@ -69,3 +70,5 @@ class UDPSocket : public BaseSocket {
             }
         }
 };
+
+#endif /* LORAREFORWARDER_SOCKET_HPP */
