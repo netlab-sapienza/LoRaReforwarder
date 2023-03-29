@@ -1,0 +1,9 @@
+[submodule "mariadbpp"]
+	path = mariadbpp
+	url = git@github.com:viaduck/mariadbpp.git
+[submodule "third_party/mariadbpp"]
+	path = third_party/mariadbpp
+	url = git@github.com:viaduck/mariadbpp.git
+[submodule "third_party/json"]
+	path = third_party/json
+	url = git@github.com:nlohmann/json.git
