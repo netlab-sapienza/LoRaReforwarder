@@ -17,7 +17,7 @@ cmake ..
 make
 ```
 
-Building and run the project on a QEMU emulated board when inside this project folder:
+Building and run the project when inside the build folder:
 ```sh
 ./loraReforwarder
 ```

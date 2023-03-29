@@ -2,6 +2,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <iostream>
+#include <future>
 #include <errno.h>
 #include <string>
 
@@ -29,7 +30,10 @@ namespace lorareforwarder::server {
             socket.SendTo(message, length, "localhost", 1700);
 
             packet::LoRaPacket* pack = packet::LoRaPacketParser::parse(message, length);
-            if(packet::LoRaPacketParser::getPacketType(message[3]) == "PKT_PUSH_DATA") database.insertPushDataPacket(pack);
+            if(packet::LoRaPacketParser::getPacketType(message[3]) == "PKT_PUSH_DATA") 
+                std::async(std::launch::async, [&]() {
+                    database::Database::insertPushDataPacketStatic(database, pack);
+                });
 
             socket.onRawMessageReceived = [&](const uint8_t* servermessage, int serverlength, std::string serveripv4, uint16_t serverport) {
                 std::cout << "SERVER " << serveripv4 << ":" << serverport << " => " << servermessage << "(" << serverlength << ")" << " => " << packet::LoRaPacketParser::getPacketType(servermessage[3]) << std::endl;                
