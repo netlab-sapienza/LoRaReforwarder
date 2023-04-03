@@ -12,7 +12,6 @@
 
 namespace lorareforwarder::server {
     LoRaServer::LoRaServer(uint16_t port, database::Database& _database) : database {_database} {
-        database = _database;
         init(port);
     }
 
@@ -22,19 +21,20 @@ namespace lorareforwarder::server {
         UDPServer udpServer;
 
         UDPSocket socket([](int errorCode, std::__1::string errorMessage) {
-            std::cout << errorCode << " : " << errorMessage << std::endl;
+            common::handle_error_en(errorCode, errorMessage);
         });
 
         udpServer.onRawMessageReceived = [&](const uint8_t* message, int length, std::string ipv4, uint16_t port)  {
             std::cout << ipv4 << ":" << port << " => " << message << "(" << length << ")" << " => " << packet::LoRaPacketParser::getPacketType(message[3]) << std::endl;
             socket.SendTo(message, length, "localhost", 1700);
 
-            packet::LoRaPacket* pack = packet::LoRaPacketParser::parse(message, length);
-            if(packet::LoRaPacketParser::getPacketType(message[3]) == "PKT_PUSH_DATA") 
+            if(packet::LoRaPacketParser::getPacketType(message[3]) == "PKT_PUSH_DATA") {
+                packet::LoRaPacket* pushpacket = packet::LoRaPacketParser::parse(message, length);
                 std::async(std::launch::async, [&]() {
-                    database::Database::insertPushDataPacketStatic(database, pack);
+                    database::Database::insertPushDataPacketStatic(database, pushpacket);
                 });
-
+            }
+            
             socket.onRawMessageReceived = [&](const uint8_t* servermessage, int serverlength, std::string serveripv4, uint16_t serverport) {
                 std::cout << "SERVER " << serveripv4 << ":" << serverport << " => " << servermessage << "(" << serverlength << ")" << " => " << packet::LoRaPacketParser::getPacketType(servermessage[3]) << std::endl;                
                 udpServer.SendTo(servermessage, serverlength, ipv4, port);
@@ -49,11 +49,11 @@ namespace lorareforwarder::server {
         };
         
         udpServer.Bind(port, [](int errorCode, std::string errorMessage) {
-            std::cout << errorCode << " : " << errorMessage << std::endl;
+            common::handle_error_en(errorCode, errorMessage);
         });
 
         std::string input;
-        getline(std::cin, input);
+        std::getline(std::cin, input);
         while (input != "exit") {
             std::getline(std::cin, input);
         }

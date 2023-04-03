@@ -4,6 +4,10 @@
 #include <iostream>
 #include <errno.h>
 
+#include <signal.h>
+#include <stdlib.h>
+#include <stdio.h>
+
 #include "server/server.hpp"
 #include "database/database.hpp"
 #include "common/common.hpp"

@@ -17,7 +17,6 @@ namespace lorareforwarder::database {
     Database::~Database() = default;
 
     int Database::insertPushDataPacket(packet::LoRaPacket* packet) {
-
         char macStr[18];
         snprintf(macStr, sizeof(macStr), "%08X%08X", (uint32_t)(packet->gw_mac >> 32), (uint32_t)(packet->gw_mac & 0xFFFFFFFF));
         std::string str(macStr);
@@ -61,12 +60,14 @@ namespace lorareforwarder::database {
                 stmt->set_float(14, packet->rxpk_buf[i]->lsnr);
                 stmt->set_unsigned32(15, packet->rxpk_buf[i]->size);
                 stmt->set_string(16, packet->rxpk_buf[i]->data);
+
                 if(statid > -1) stmt->set_unsigned64(17, statid);
+                else stmt->set_unsigned64(17, mariadb::value::null);
                 stmt->insert();
 
                 free(packet->rxpk_buf[0]);
             }
-            
+
             free(packet->rxpk_buf);
             return 0;
         }

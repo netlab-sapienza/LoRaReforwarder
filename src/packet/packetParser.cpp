@@ -1,3 +1,4 @@
+#include "common/common.hpp"
 #include <stdio.h>
 #include <iostream>
 #include <nlohmann/json.hpp>
@@ -7,7 +8,6 @@ using json = nlohmann::json;
 
 namespace lorareforwarder::packet {
     std::string LoRaPacketParser::getPacketType(const uint8_t buf) {
-
         std::string type;
 
         switch(buf) {
@@ -37,22 +37,19 @@ namespace lorareforwarder::packet {
     }
 
     LoRaPacket* LoRaPacketParser::parse(const uint8_t *packet_buf, size_t length) {
-
         LoRaPacket* packet = (LoRaPacket*) malloc(sizeof(LoRaPacket));
+        if(!packet) common::handle_error("Can't allocate memory for LoRaPacket instance");
+
         packet->buf = packet_buf;
         packet->length = length;
 
         /* check and parse the payload */
         if (length < 12) { /* not enough bytes for packet from gateway */
-            printf(" (too short for GW <-> MAC protocol)\n");
-
             packet->isValid = false;
             return packet;
         }
 
         if (packet_buf[0] != PKT_PROTOCOL_VERSION) { /* check protocol version number */
-            printf(", invalid version %u\n", packet_buf[0]);
-
             packet->isValid = false;
             return packet;
         }
@@ -62,7 +59,6 @@ namespace lorareforwarder::packet {
         packet->gw_mac = ((uint64_t) ntohl(packet->raw_mac_h) << 32) + (uint64_t) ntohl(packet->raw_mac_l);
 
         /* interpret gateway command */
-
         switch(packet_buf[3]) {
             case PKT_PUSH_DATA: {
                 packet->type = PKT_PUSH_DATA;
@@ -81,9 +77,8 @@ namespace lorareforwarder::packet {
             case PKT_PULL_DATA: {
                 packet->type = PKT_PULL_DATA;
 
-                printf(", PULL_DATA from gateway 0x%08X%08X\n", (uint32_t)(packet->gw_mac >> 32), (uint32_t)(packet->gw_mac & 0xFFFFFFFF));
+                printf("PULL_DATA from gateway 0x%08X%08X\n", (uint32_t)(packet->gw_mac >> 32), (uint32_t)(packet->gw_mac & 0xFFFFFFFF));
                 packet->ack_command = PKT_PULL_ACK;
-                printf("<-  pkt out, PULL_ACK for host");
                 break;
             }
             case PKT_PULL_RESP: {
@@ -96,16 +91,14 @@ namespace lorareforwarder::packet {
             }
             case PKT_PULL_ACK: {
                 packet->type = PKT_PULL_ACK;
-
                 break;
             }
             case PKT_TX_ACK: {
                 packet->type = PKT_TX_ACK;
-
                 break;
             }
             default: {
-                printf(", unexpected command %u\n", packet_buf[3]);
+                printf("Unexpected command %u\n", packet_buf[3]);
                 packet->isValid = false;
             }
         };  
@@ -120,8 +113,11 @@ namespace lorareforwarder::packet {
 
         if(!packjson["rxpk"].is_null() && packjson["rxpk"].is_array()) {
             packet->rxpk_buf = (rxpk**) malloc(packjson["rxpk"].size() * sizeof(rxpk*));
+            if(!packet->rxpk_buf) common::handle_error("Can't allocate memory for rxpk* instance");
+
             for(int i = 0; i < packjson["rxpk"].size(); i++) {
                 packet->rxpk_buf[i] = (rxpk*) malloc(sizeof(rxpk));
+                if(!packet->rxpk_buf[i]) common::handle_error("Can't allocate memory for rxpk instance");
 
                 packet->rxpk_buf[i]->time = packjson["rxpk"][i]["time"];
                 packet->rxpk_buf[i]->tmms = packjson["rxpk"][i]["tmms"];
@@ -143,6 +139,7 @@ namespace lorareforwarder::packet {
 
         if(!packjson["stat"].is_null()) {
             packet->stat_buf = (stat*) malloc(sizeof(stat));
+            if(!packet->stat_buf) common::handle_error("Can't allocate memory for stat instance");
 
             packet->stat_buf->time = packjson["stat"]["time"];
             packet->stat_buf->lati = packjson["stat"]["lati"];
@@ -159,10 +156,12 @@ namespace lorareforwarder::packet {
 
     void LoRaPacketParser::parsePullJson(const char *string, LoRaPacket* packet) {
         json packjson = json::parse(string);
-        std::cout << "txpk: " << packjson["txpk"] << std::endl;
 
         if(!packjson["txpk"].is_null()) {
+            std::cout << "txpk: " << packjson["txpk"] << std::endl;
+
             packet->txpk_buf = (txpk*) malloc(sizeof(txpk));
+            if(!packet->txpk_buf) common::handle_error("Can't allocate memory for txpk instance");
 
             if(packjson["txpk"]["imme"].is_null())
                 packet->txpk_buf->imme = false;
