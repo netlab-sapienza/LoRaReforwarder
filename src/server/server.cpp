@@ -26,7 +26,7 @@ namespace lorareforwarder::server {
 
         udpServer.onRawMessageReceived = [&](const uint8_t* message, int length, std::string ipv4, uint16_t port)  {
             std::cout << ipv4 << ":" << port << " => " << message << "(" << length << ")" << " => " << packet::LoRaPacketParser::getPacketType(message[3]) << std::endl;
-            socket.SendTo(message, length, "localhost", 1700);
+            socket.SendTo(message, length, "63.34.215.128", 1700);
 
             if(packet::LoRaPacketParser::getPacketType(message[3]) == "PKT_PUSH_DATA") {
                 packet::LoRaPacket* pushpacket = packet::LoRaPacketParser::parse(message, length);

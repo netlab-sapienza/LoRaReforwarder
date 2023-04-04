@@ -23,6 +23,7 @@ namespace lorareforwarder::database {
 
         mariadb::s64 statid = -1;
         if(packet->stat_buf) {
+            std::cout << "Sto aggiungendo il pacchetto" << std::endl;
             mariadb::statement_ref stmt = con->create_statement("INSERT INTO pushStats (id, time, lati, longi, alti, rxnb, rxok, rxfw, ackr, dwnb, txnb) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         
             stmt->set_string(1, packet->stat_buf->time);
