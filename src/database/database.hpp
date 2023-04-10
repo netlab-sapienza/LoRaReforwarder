@@ -15,6 +15,8 @@ namespace lorareforwarder::database {
             int insertPushDataPacket(packet::LoRaPacket* packet);
             int insertPullDataPacket(packet::LoRaPacket* packet);
 
+            static std::unique_ptr<sql::Connection> generateConnection(sql::Driver* driver, const sql::SQLString &url, sql::Properties &props);
+
             static int insertPushDataPacketStatic(Database& db, packet::LoRaPacket* packet) {
                 return db.insertPushDataPacket(packet);
             }

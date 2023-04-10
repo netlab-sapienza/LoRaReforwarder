@@ -13,11 +13,15 @@ namespace lorareforwarder::database {
             sql::SQLString url("jdbc:mariadb://" + host_name + ":" + std::to_string(port) + "/" + schema);
             sql::Properties properties({{"user", user_name}, {"password", password}});
 
-            std::unique_ptr<sql::Connection> localconn(driver->connect(url, properties));
-            conn.reset(localconn.get());
+            conn = Database::generateConnection(driver, url, properties);
         } catch(sql::SQLException& e){
             std::cerr << "Error when enstablishing connection: " << e.what() << std::endl;
         }
+    }
+
+    std::unique_ptr<sql::Connection> Database::generateConnection(sql::Driver* driver, const sql::SQLString &url, sql::Properties &props) {
+        std::unique_ptr<sql::Connection> localconn(driver->connect(url, props));
+        return localconn;
     }
 
     Database::~Database() = default;
