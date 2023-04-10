@@ -21,4 +21,6 @@ using namespace lorareforwarder;
 int main(int argc, char const *argv[]) {
     database::Database database("10.6.0.2", "lorareforwarder", "lorareforwarderpwd", "lorareforwarder", 3306);
     server::LoRaServer server(SERVER_PORT, database, NETWORK_SERVER_ADDR, NETWORK_SERVER_PORT);
+
+    while(1);
 }
