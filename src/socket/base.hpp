@@ -9,6 +9,7 @@
 #include <string>
 #include <functional>
 #include <cerrno>
+#include <cstdlib>
 
 #include "common/common.hpp"
 
