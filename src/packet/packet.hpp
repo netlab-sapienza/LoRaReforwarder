@@ -11,10 +11,9 @@
 #define PKT_TX_ACK       5
 
 #include <stdlib.h>
-#include <mariadb++/types.hpp>
-
+#include <mariadb/conncpp/Types.hpp>
 namespace lorareforwarder::packet {
-    typedef struct {
+    /*typedef struct {
         bool imme;
         mariadb::u64 tmst;
         mariadb::u64 tmms;
@@ -49,19 +48,19 @@ namespace lorareforwarder::packet {
         mariadb::f32 lsnr;
         mariadb::u32 size;
         std::string data;
-    } rxpk;
+    } rxpk;*/
 
     typedef struct {
         std::string time;
-        mariadb::f32 lati;
-        mariadb::f32 longi;
-        mariadb::s32 alti;
-        mariadb::u32 rxnb;
-        mariadb::s32 rxok;
-        mariadb::u32 rxfw;
-        mariadb::s32 ackr;
-        mariadb::u32 dwnb;
-        mariadb::u32 txnb;
+        float lati;
+        float longi;
+        int32_t alti;
+        uint32_t rxnb;
+        int32_t rxok;
+        uint32_t rxfw;
+        int32_t ackr;
+        uint32_t dwnb;
+        uint32_t txnb;
     } stat;
 
     class LoRaPacket {
@@ -79,8 +78,8 @@ namespace lorareforwarder::packet {
 
             uint8_t ack_command;
 
-            rxpk** rxpk_buf;
-            txpk* txpk_buf;
+            /*rxpk** rxpk_buf;
+            txpk* txpk_buf;*/
             stat* stat_buf;
 
             bool isValid = true;

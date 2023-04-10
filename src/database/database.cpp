@@ -1,17 +1,23 @@
 #include <iostream>
 #include <cstring>
-#include <mariadb++/result_set.hpp>
-#include <mariadb++/statement.hpp>
 
 #include "database.hpp"
 
 namespace lorareforwarder::database {
 
     Database::Database(const std::string &host_name, const std::string &user_name, const std::string &password, 
-                       const std::string &schema, mariadb::u32 port) {
+                       const std::string &schema, uint32_t port) {
+        try {
+            sql::Driver* driver = sql::mariadb::get_driver_instance();
 
-        acc = mariadb::account::create(host_name, user_name, password, schema, port);
-        con = mariadb::connection::create(acc);
+            sql::SQLString url("jdbc:mariadb://" + host_name + ":" + std::to_string(port) + "/" + schema);
+            sql::Properties properties({{"user", user_name}, {"password", password}});
+
+            std::unique_ptr<sql::Connection> localconn(driver->connect(url, properties));
+            conn.reset(localconn.get());
+        } catch(sql::SQLException& e){
+            std::cerr << "Error when enstablishing connection: " << e.what() << std::endl;
+        }
     }
 
     Database::~Database() = default;
@@ -21,27 +27,32 @@ namespace lorareforwarder::database {
         snprintf(macStr, sizeof(macStr), "%08X%08X", (uint32_t)(packet->gw_mac >> 32), (uint32_t)(packet->gw_mac & 0xFFFFFFFF));
         std::string str(macStr);
 
-        mariadb::s64 statid = -1;
+        sql::ResultSet *res;
         if(packet->stat_buf) {
-            std::cout << "Sto aggiungendo il pacchetto" << std::endl;
-            mariadb::statement_ref stmt = con->create_statement("INSERT INTO pushStats (id, time, lati, longi, alti, rxnb, rxok, rxfw, ackr, dwnb, txnb) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        
-            stmt->set_string(1, packet->stat_buf->time);
-            stmt->set_float(2, packet->stat_buf->lati);
-            stmt->set_float(3, packet->stat_buf->longi);
-            stmt->set_signed32(4, packet->stat_buf->alti);
-            stmt->set_unsigned32(5, packet->stat_buf->rxnb);
-            stmt->set_signed32(6, packet->stat_buf->rxok);
-            stmt->set_unsigned32(7, packet->stat_buf->rxfw);
-            stmt->set_signed32(8, packet->stat_buf->ackr);
-            stmt->set_unsigned32(9, packet->stat_buf->dwnb);
-            stmt->set_unsigned32(10, packet->stat_buf->txnb);
-            statid = stmt->insert();
+            std::cout << "Adding a new packet to the database" << std::endl;
 
-            std::cout << "Inserito: " << statid << std::endl;
+            try {
+                std::unique_ptr<sql::PreparedStatement> stmnt(conn->prepareStatement("INSERT INTO pushStats (id, time, lati, longi, alti, rxnb, rxok, rxfw, ackr, dwnb, txnb) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
+
+                stmnt->setString(1, packet->stat_buf->time);
+                stmnt->setFloat(2, packet->stat_buf->lati);
+                stmnt->setFloat(3, packet->stat_buf->longi);
+                stmnt->setInt(4, packet->stat_buf->alti);
+                stmnt->setUInt(5, packet->stat_buf->rxnb);
+                stmnt->setInt(6, packet->stat_buf->rxok);
+                stmnt->setUInt(7, packet->stat_buf->rxfw);
+                stmnt->setInt(8, packet->stat_buf->ackr);
+                stmnt->setUInt(9, packet->stat_buf->dwnb);
+                stmnt->setUInt(10, packet->stat_buf->txnb);
+                res = stmnt->executeQuery();
+
+                std::cout << "Inserito: " << res->getMetaData()->getColumnName(0) << std::endl;
+            } catch(sql::SQLException& e){
+                std::cerr << "Error inserting new packet: " << e.what() << std::endl;
+            }
         }
 
-        if(packet->rxpk_buf) {
+        /*if(packet->rxpk_buf) {
             mariadb::statement_ref stmt = con->create_statement("INSERT INTO pushPackets (id, gwui, time, tmms, tmst, freq, chan, rfch, stat, modu, datrid, datr, codr, rssi, lsnr, size, data, statId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
             for(int i = 0; i < sizeof(packet->rxpk_buf)/sizeof(packet->rxpk_buf[0]); i++) {
@@ -71,14 +82,14 @@ namespace lorareforwarder::database {
 
             free(packet->rxpk_buf);
             return 0;
-        }
+        }*/
 
         free(packet);
         return -1;
     }
 
     int Database::insertPullDataPacket(packet::LoRaPacket* packet) {
-        if(packet->txpk_buf) {
+        /*if(packet->txpk_buf) {
             mariadb::statement_ref stmt = con->create_statement("INSERT INTO pullPackets (id, imme, tmst, tmms, freq, rfch, powe, modu, datrid, datr, codr, fdev, ipol, prea, size, data, ncrc) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
             stmt->set_boolean(1, packet->txpk_buf->imme);
@@ -103,7 +114,7 @@ namespace lorareforwarder::database {
             return 0;
         }
 
-        free(packet);
+        free(packet);*/
         return -1;
     }
 }

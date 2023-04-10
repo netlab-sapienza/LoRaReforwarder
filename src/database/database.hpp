@@ -1,9 +1,7 @@
 #ifndef LORAREFORWARDER_DATABASE_HPP
 #define LORAREFORWARDER_DATABASE_HPP
 
-#include <mariadb++/types.hpp>
-#include <mariadb++/account.hpp>
-#include <mariadb++/connection.hpp>
+#include <mariadb/conncpp.hpp>
 
 #include "packet/packet.hpp"
 
@@ -11,7 +9,7 @@ namespace lorareforwarder::database {
     class Database {
         public:
             explicit Database(const std::string &host_name, const std::string &user_name, const std::string &password,
-                              const std::string &schema, mariadb::u32 port);
+                              const std::string &schema, uint32_t port);
             ~Database();
             
             int insertPushDataPacket(packet::LoRaPacket* packet);
@@ -24,8 +22,7 @@ namespace lorareforwarder::database {
                 return db.insertPullDataPacket(packet);
             }
         private:
-            mariadb::account_ref acc;
-            mariadb::connection_ref con;
+            std::unique_ptr<sql::Connection> conn;
     };
 }
 

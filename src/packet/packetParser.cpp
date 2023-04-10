@@ -4,6 +4,7 @@
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
+#include <mariadb/conncpp/Types.hpp>
 #include "packetParser.hpp"
 
 namespace lorareforwarder::packet {
@@ -110,7 +111,7 @@ namespace lorareforwarder::packet {
         json packjson = json::parse(string);
         std::cout << "Ciao1" << std::endl;
 
-        if(!packjson["rxpk"].is_null() && packjson["rxpk"].is_array()) {
+        /*if(!packjson["rxpk"].is_null() && packjson["rxpk"].is_array()) {
             std::cout << "Ciao1" << std::endl;
             std::cout << "rxpk: " << packjson["rxpk"] << std::endl;
 
@@ -194,70 +195,70 @@ namespace lorareforwarder::packet {
                     packet->rxpk_buf[i]->data = mariadb::value::null;
 
             }
+        }*/
+
+        if(!packjson["stat"].is_null()) {
+            std::cout << "stat: " << packjson["stat"] << std::endl;
+
+            packet->stat_buf = (stat*) malloc(sizeof(stat));
+            if(!packet->stat_buf) common::handle_error("Can't allocate memory for stat instance");
+
+            if(!packjson["stat"]["time"].is_null())
+                packet->stat_buf->time = packjson["stat"]["time"];
+            else
+                packet->stat_buf->time = "";
+
+            if(!packjson["stat"]["lati"].is_null())
+                packet->stat_buf->lati = packjson["stat"]["lati"];
+            else
+                packet->stat_buf->lati = sql::_NULL;
+
+            if(!packjson["stat"]["long"].is_null())
+                packet->stat_buf->longi = packjson["stat"]["long"];
+            else
+                packet->stat_buf->longi = sql::_NULL;
+
+            if(!packjson["stat"]["alti"].is_null())
+                packet->stat_buf->alti = packjson["stat"]["alti"];
+            else
+                packet->stat_buf->alti = sql::_NULL;
+
+            if(!packjson["stat"]["rxnb"].is_null())
+                packet->stat_buf->rxnb = packjson["stat"]["rxnb"];
+            else
+                packet->stat_buf->rxnb = sql::_NULL;
+
+            if(!packjson["stat"]["rxok"].is_null())
+                packet->stat_buf->rxok = packjson["stat"]["rxok"];
+            else
+                packet->stat_buf->rxok = sql::_NULL;
+
+            if(!packjson["stat"]["rxfw"].is_null())
+                packet->stat_buf->rxfw = packjson["stat"]["rxfw"];
+            else
+                packet->stat_buf->rxfw = sql::_NULL;
+
+            if(!packjson["stat"]["ackr"].is_null())
+                packet->stat_buf->ackr = packjson["stat"]["ackr"];
+            else
+                packet->stat_buf->ackr = sql::_NULL;
+
+            if(!packjson["stat"]["dwnb"].is_null())
+                packet->stat_buf->dwnb = packjson["stat"]["dwnb"];
+            else
+                packet->stat_buf->dwnb = sql::_NULL;
+
+            if(!packjson["stat"]["txnb"].is_null())
+                packet->stat_buf->txnb = packjson["stat"]["txnb"];
+            else
+                packet->stat_buf->txnb = sql::_NULL;
         }
-
-            if(!packjson["stat"].is_null()) {
-                std::cout << "stat: " << packjson["stat"] << std::endl;
-
-                packet->stat_buf = (stat*) malloc(sizeof(stat));
-                if(!packet->stat_buf) common::handle_error("Can't allocate memory for stat instance");
-
-                if(!packjson["stat"]["time"].is_null())
-                    packet->stat_buf->time = packjson["stat"]["time"];
-                else
-                    packet->stat_buf->time = "";
-
-                if(!packjson["stat"]["lati"].is_null())
-                    packet->stat_buf->lati = packjson["stat"]["lati"];
-                else
-                    packet->stat_buf->lati = mariadb::value::null;
-
-                if(!packjson["stat"]["long"].is_null())
-                    packet->stat_buf->longi = packjson["stat"]["long"];
-                else
-                    packet->stat_buf->longi = mariadb::value::null;
-
-                if(!packjson["stat"]["alti"].is_null())
-                    packet->stat_buf->alti = packjson["stat"]["alti"];
-                else
-                    packet->stat_buf->alti = mariadb::value::null;
-
-                if(!packjson["stat"]["rxnb"].is_null())
-                    packet->stat_buf->rxnb = packjson["stat"]["rxnb"];
-                else
-                    packet->stat_buf->rxnb = mariadb::value::null;
-
-                if(!packjson["stat"]["rxok"].is_null())
-                    packet->stat_buf->rxok = packjson["stat"]["rxok"];
-                else
-                    packet->stat_buf->rxok = mariadb::value::null;
-
-                if(!packjson["stat"]["rxfw"].is_null())
-                    packet->stat_buf->rxfw = packjson["stat"]["rxfw"];
-                else
-                    packet->stat_buf->rxfw = mariadb::value::null;
-
-                if(!packjson["stat"]["ackr"].is_null())
-                    packet->stat_buf->ackr = packjson["stat"]["ackr"];
-                else
-                    packet->stat_buf->ackr = mariadb::value::null;
-
-                if(!packjson["stat"]["dwnb"].is_null())
-                    packet->stat_buf->dwnb = packjson["stat"]["dwnb"];
-                else
-                    packet->stat_buf->dwnb = mariadb::value::null;
-
-                if(!packjson["stat"]["txnb"].is_null())
-                    packet->stat_buf->txnb = packjson["stat"]["txnb"];
-                else
-                    packet->stat_buf->txnb = mariadb::value::null;
-            }
     }
 
     void LoRaPacketParser::parsePullJson(const char *string, LoRaPacket* packet) {
         json packjson = json::parse(string);
 
-        if(!packjson["txpk"].is_null()) {
+        /*if(!packjson["txpk"].is_null()) {
             std::cout << "txpk: " << packjson["txpk"] << std::endl;
 
             packet->txpk_buf = (txpk*) malloc(sizeof(txpk));
@@ -330,6 +331,6 @@ namespace lorareforwarder::packet {
                 packet->txpk_buf->ncrc = false;
             else
                 packet->txpk_buf->ncrc = packjson["txpk"]["ncrc"];
-        }
+        }*/
     }
 }

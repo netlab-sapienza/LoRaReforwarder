@@ -11,13 +11,10 @@
 #include "server.hpp"
 
 namespace lorareforwarder::server {
-    LoRaServer::LoRaServer(uint16_t port, database::Database& _database) : database {_database} {
-        init(port);
-    }
 
     LoRaServer::~LoRaServer() = default;
 
-    void LoRaServer::init(uint16_t port) {
+    void LoRaServer::init() {
         UDPServer udpServer;
 
         UDPSocket socket([](int errorCode, std::__1::string errorMessage) {
@@ -26,7 +23,7 @@ namespace lorareforwarder::server {
 
         udpServer.onRawMessageReceived = [&](const uint8_t* message, int length, std::string ipv4, uint16_t port)  {
             std::cout << ipv4 << ":" << port << " => " << message << "(" << length << ")" << " => " << packet::LoRaPacketParser::getPacketType(message[3]) << std::endl;
-            socket.SendTo(message, length, "63.34.215.128", 1700);
+            socket.SendTo(message, length, netserver_host, netserver_port);
 
             if(packet::LoRaPacketParser::getPacketType(message[3]) == "PKT_PUSH_DATA") {
                 packet::LoRaPacket* pushpacket = packet::LoRaPacketParser::parse(message, length);
