@@ -1,6 +1,7 @@
 #include "common/common.hpp"
 #include <stdio.h>
 #include <iostream>
+#include <arpa/inet.h>
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 

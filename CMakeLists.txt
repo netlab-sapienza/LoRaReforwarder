@@ -5,7 +5,6 @@ set(JSON_BuildTests OFF CACHE INTERNAL "")
 
 project(loraReforwarder)
 
-add_subdirectory(third_party/mariadbpp)
 add_subdirectory(third_party/json)
 
 include_directories(src)
