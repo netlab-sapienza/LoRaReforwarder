@@ -17,7 +17,7 @@ namespace lorareforwarder::server {
     void LoRaServer::init() {
         UDPServer udpServer;
 
-        UDPSocket socket([](int errorCode, std::__1::string errorMessage) {
+        UDPSocket socket([](int errorCode, std::string errorMessage) {
             common::handle_error_en(errorCode, errorMessage);
         });
 
