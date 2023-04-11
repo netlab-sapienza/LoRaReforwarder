@@ -6,7 +6,7 @@
 namespace lorareforwarder::server {
     class LoRaServer {
         public:
-            explicit LoRaServer(uint16_t _port, database::Database& _database, std::string _netserver_host, uint16_t _netserver_port) : port {_port}, database {_database}, netserver_host {_netserver_host}, netserver_port {_netserver_port} {}
+            explicit LoRaServer(uint16_t _port, database::Database& _database, std::string _netserver_host, uint16_t _netserver_port) : port {_port}, database {_database}, netserver_host {_netserver_host}, netserver_port {_netserver_port} { init(); }
             ~LoRaServer();
 
         private:

@@ -15,7 +15,7 @@ namespace lorareforwarder::database {
 
             conn = Database::generateConnection(driver, url, properties);
         } catch(sql::SQLException& e){
-            std::cerr << "Error when enstablishing connection: " << e.what() << std::endl;
+            std::cout << "Error when enstablishing connection: " << e.what() << std::endl;
         }
     }
 
