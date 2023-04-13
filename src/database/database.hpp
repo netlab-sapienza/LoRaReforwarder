@@ -12,16 +12,16 @@ namespace lorareforwarder::database {
                               const std::string &schema, uint32_t port);
             ~Database();
             
-            int insertPushDataPacket(packet::LoRaPacket* packet);
-            int insertPullDataPacket(packet::LoRaPacket* packet);
+            void insertPushDataPacket(packet::LoRaPacket* packet);
+            void insertPullDataPacket(packet::LoRaPacket* packet);
 
             static std::unique_ptr<sql::Connection> generateConnection(sql::Driver* driver, const sql::SQLString &url, sql::Properties &props);
 
-            static int insertPushDataPacketStatic(Database& db, packet::LoRaPacket* packet) {
-                return db.insertPushDataPacket(packet);
+            static void insertPushDataPacketStatic(Database& db, packet::LoRaPacket* packet) {
+                db.insertPushDataPacket(packet);
             }
-            static int insertPullDataPacketStatic(Database& db, packet::LoRaPacket* packet) {
-                return db.insertPullDataPacket(packet);
+            static void insertPullDataPacketStatic(Database& db, packet::LoRaPacket* packet) {
+                db.insertPullDataPacket(packet);
             }
         private:
             std::unique_ptr<sql::Connection> conn;
