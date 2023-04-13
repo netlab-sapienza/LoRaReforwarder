@@ -10,7 +10,7 @@ class UDPSocket : public BaseSocket {
     public:
         std::function<void(const uint8_t*, int, std::string, std::uint16_t)> onRawMessageReceived;
 
-        explicit UDPSocket(bool shouldThread = false, FDR_ON_ERROR, int socketId = -1): BaseSocket(onError, socketId) {
+        explicit UDPSocket(bool shouldThread = true, FDR_ON_ERROR, int socketId = -1): BaseSocket(onError, socketId) {
             if(shouldThread) {
                 std::thread socketThread(ReceiveFrom, this);
                 socketThread.detach();

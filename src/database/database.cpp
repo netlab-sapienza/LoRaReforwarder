@@ -15,7 +15,7 @@ namespace lorareforwarder::database {
 
             conn = Database::generateConnection(driver, url, properties);
         } catch(sql::SQLException& e){
-            std::cout << "Error when enstablishing connection: " << e.what() << std::endl;
+            std::cerr << "Error when enstablishing connection: " << e.what() << std::endl;
         }
     }
 
@@ -33,10 +33,10 @@ namespace lorareforwarder::database {
 
         sql::ResultSet *res;
         if(packet->stat_buf) {
-            std::cout << "Adding a new packet to the database" << std::endl;
+            std::cout << "Adding a new stat packet to the database" << std::endl;
 
             try {
-                std::unique_ptr<sql::PreparedStatement> stmnt(conn->prepareStatement("INSERT INTO pushStats (id, time, lati, longi, alti, rxnb, rxok, rxfw, ackr, dwnb, txnb) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
+                std::unique_ptr<sql::PreparedStatement> stmnt(conn->prepareStatement("INSERT INTO pushStats (time, lati, longi, alti, rxnb, rxok, rxfw, ackr, dwnb, txnb) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
 
                 stmnt->setString(1, packet->stat_buf->time);
                 stmnt->setFloat(2, packet->stat_buf->lati);
@@ -50,45 +50,52 @@ namespace lorareforwarder::database {
                 stmnt->setUInt(10, packet->stat_buf->txnb);
                 res = stmnt->executeQuery();
 
-                std::cout << "Inserito: " << res->getMetaData()->getColumnName(0) << std::endl;
+                delete packet->stat_buf;
+
             } catch(sql::SQLException& e){
-                std::cerr << "Error inserting new packet: " << e.what() << std::endl;
+                std::cerr << "Error inserting new stat packet: " << e.what() << std::endl;
             }
         }
 
-        /*if(packet->rxpk_buf) {
-            mariadb::statement_ref stmt = con->create_statement("INSERT INTO pushPackets (id, gwui, time, tmms, tmst, freq, chan, rfch, stat, modu, datrid, datr, codr, rssi, lsnr, size, data, statId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-
+        if(packet->rxpk_buf) {
             for(int i = 0; i < sizeof(packet->rxpk_buf)/sizeof(packet->rxpk_buf[0]); i++) {
-                stmt->set_string(1, macStr);
-                stmt->set_string(2, packet->rxpk_buf[i]->time);
-                stmt->set_unsigned64(3, packet->rxpk_buf[i]->tmms);
-                stmt->set_unsigned32(4, packet->rxpk_buf[i]->tmst);
-                stmt->set_float(5, packet->rxpk_buf[i]->freq);
-                stmt->set_unsigned32(6, packet->rxpk_buf[i]->chan);
-                stmt->set_unsigned32(7, packet->rxpk_buf[i]->rfch);
-                stmt->set_signed16(8, packet->rxpk_buf[i]->stat);
-                stmt->set_string(9, packet->rxpk_buf[i]->modu);
-                stmt->set_string(10, packet->rxpk_buf[i]->datrid);
-                stmt->set_unsigned32(11, packet->rxpk_buf[i]->datr);
-                stmt->set_string(12, packet->rxpk_buf[i]->codr);
-                stmt->set_signed32(13, packet->rxpk_buf[i]->rssi);
-                stmt->set_float(14, packet->rxpk_buf[i]->lsnr);
-                stmt->set_unsigned32(15, packet->rxpk_buf[i]->size);
-                stmt->set_string(16, packet->rxpk_buf[i]->data);
+                try {
+                    std::unique_ptr<sql::PreparedStatement> stmnt(conn->prepareStatement("INSERT INTO pushPackets (gwui, time, tmms, tmst, freq, chan, rfch, stat, modu, datr, codr, rssi, lsnr, size, data, statId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
 
-                if(statid > -1) stmt->set_unsigned64(17, statid);
-                else stmt->set_unsigned64(17, mariadb::value::null);
-                stmt->insert();
+                    stmnt->setString(1, macStr);
+                    stmnt->setString(2, packet->rxpk_buf[i].time);
+                    stmnt->setUInt64(3, packet->rxpk_buf[i].tmms);
+                    stmnt->setUInt(4, packet->rxpk_buf[i].tmst);
+                    stmnt->setFloat(5, packet->rxpk_buf[i].freq);
+                    stmnt->setUInt(6, packet->rxpk_buf[i].chan);
+                    stmnt->setUInt(7, packet->rxpk_buf[i].rfch);
+                    stmnt->setShort(8, packet->rxpk_buf[i].stat);
+                    stmnt->setString(9, packet->rxpk_buf[i].modu);
+                    stmnt->setString(10, packet->rxpk_buf[i].datrid);
+                    stmnt->setString(11, packet->rxpk_buf[i].codr);
+                    stmnt->setInt(12, packet->rxpk_buf[i].rssi);
+                    stmnt->setFloat(13, packet->rxpk_buf[i].lsnr);
+                    stmnt->setUInt(14, packet->rxpk_buf[i].size);
+                    stmnt->setString(15, packet->rxpk_buf[i].data);
 
-                free(packet->rxpk_buf[0]);
+                    if(statid > -1) stmnt->setUInt64(16, statid);
+                    else stmnt->setUInt64(16, sql::_NULL);
+
+                    res = stmnt->executeQuery();
+
+                    delete packet->stat_buf;
+
+                } catch(sql::SQLException& e){
+                    std::cerr << "Error inserting new stat packet: " << e.what() << std::endl;
+                }
             }
 
-            free(packet->rxpk_buf);
+            delete packet->rxpk_buf;
+            delete packet;
             return 0;
-        }*/
+        }
 
-        free(packet);
+        delete packet;
         return -1;
     }
 

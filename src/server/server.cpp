@@ -45,6 +45,7 @@ namespace lorareforwarder::server {
             };
         };
         
+        std::cout << "Forwarder listening on UDP Port: " << port << std::endl;
         udpServer.Bind(port, [](int errorCode, std::string errorMessage) {
             common::handle_error_en(errorCode, errorMessage);
         });

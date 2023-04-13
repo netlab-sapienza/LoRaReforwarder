@@ -1,8 +1,10 @@
 #include "common/common.hpp"
 #include <stdio.h>
 #include <iostream>
+
 #include <arpa/inet.h>
 #include <nlohmann/json.hpp>
+#include <cstring>
 using json = nlohmann::json;
 
 #include <mariadb/conncpp/Types.hpp>
@@ -39,7 +41,7 @@ namespace lorareforwarder::packet {
     }
 
     LoRaPacket* LoRaPacketParser::parse(const uint8_t *packet_buf, size_t length) {
-        LoRaPacket* packet = (LoRaPacket*) malloc(sizeof(LoRaPacket));
+        LoRaPacket *packet = new LoRaPacket;
         if(!packet) common::handle_error("Can't allocate memory for LoRaPacket instance");
 
         packet->buf = packet_buf;
@@ -88,7 +90,7 @@ namespace lorareforwarder::packet {
 
                 char* string = (char*) (packet_buf + 4);
                 printf("La stringa che contiene e' %s\n", string);
-                parsePullJson(string, packet);
+                //parsePullJson(string, packet);
                 break;
             }
             case PKT_PULL_ACK: {
@@ -112,96 +114,92 @@ namespace lorareforwarder::packet {
         json packjson = json::parse(string);
         std::cout << "Ciao1" << std::endl;
 
-        /*if(!packjson["rxpk"].is_null() && packjson["rxpk"].is_array()) {
+        if(!packjson["rxpk"].is_null() && packjson["rxpk"].is_array()) {
             std::cout << "Ciao1" << std::endl;
             std::cout << "rxpk: " << packjson["rxpk"] << std::endl;
 
-            packet->rxpk_buf = (rxpk**) malloc(packjson["rxpk"].size() * sizeof(rxpk*));
-            if(!packet->rxpk_buf) common::handle_error("Can't allocate memory for rxpk* instance");
+            packet->rxpk_buf = new rxpk[packjson["rxpk"].size()];
+            if(!packet->rxpk_buf) common::handle_error("Can't allocate memory for rxpk instance");
 
             for(int i = 0; i < packjson["rxpk"].size(); i++) {
-            std::cout << "Ciao " << i << std::endl;
-
-                packet->rxpk_buf[i] = (rxpk*) malloc(sizeof(rxpk));
-                if(!packet->rxpk_buf[i]) common::handle_error("Can't allocate memory for rxpk instance");
 
                 if(!packjson["rxpk"][i]["time"].is_null())
-                    packet->rxpk_buf[i]->time = packjson["rxpk"][i]["time"];
+                    packet->rxpk_buf[i].time = packjson["rxpk"][i]["time"];
                 else
-                    packet->rxpk_buf[i]->time = "";
+                    packet->rxpk_buf[i].time = "";
 
                 if(!packjson["rxpk"][i]["tmms"].is_null())
-                    packet->rxpk_buf[i]->tmms = packjson["rxpk"][i]["tmms"];
+                    packet->rxpk_buf[i].tmms = packjson["rxpk"][i]["tmms"];
                 else
-                    packet->rxpk_buf[i]->tmms = mariadb::value::null;
+                    packet->rxpk_buf[i].tmms = sql::_NULL;
 
                 if(!packjson["rxpk"][i]["tmst"].is_null())
-                    packet->rxpk_buf[i]->tmst = packjson["rxpk"][i]["tmst"];
+                    packet->rxpk_buf[i].tmst = packjson["rxpk"][i]["tmst"];
                 else
-                    packet->rxpk_buf[i]->tmst = mariadb::value::null;
+                    packet->rxpk_buf[i].tmst = sql::_NULL;
 
                 if(!packjson["rxpk"][i]["chan"].is_null())
-                    packet->rxpk_buf[i]->chan = packjson["rxpk"][i]["chan"];
+                    packet->rxpk_buf[i].chan = packjson["rxpk"][i]["chan"];
                 else
-                    packet->rxpk_buf[i]->chan = mariadb::value::null;
+                    packet->rxpk_buf[i].chan = sql::_NULL;
 
                 if(!packjson["rxpk"][i]["rfch"].is_null())
-                    packet->rxpk_buf[i]->rfch = packjson["rxpk"][i]["rfch"];
+                    packet->rxpk_buf[i].rfch = packjson["rxpk"][i]["rfch"];
                 else
-                    packet->rxpk_buf[i]->rfch = mariadb::value::null;
+                    packet->rxpk_buf[i].rfch = sql::_NULL;
 
                 if(!packjson["rxpk"][i]["stat"].is_null())
-                    packet->rxpk_buf[i]->stat = packjson["rxpk"][i]["stat"];
+                    packet->rxpk_buf[i].stat = packjson["rxpk"][i]["stat"];
                 else
-                    packet->rxpk_buf[i]->stat = mariadb::value::null;
+                    packet->rxpk_buf[i].stat = sql::_NULL;
 
                 if(!packjson["rxpk"][i]["freq"].is_null())
-                    packet->rxpk_buf[i]->freq = packjson["rxpk"][i]["freq"];
+                    packet->rxpk_buf[i].freq = packjson["rxpk"][i]["freq"];
                 else
-                    packet->rxpk_buf[i]->freq = mariadb::value::null;
+                    packet->rxpk_buf[i].freq = sql::_NULL;
 
                 if(!packjson["rxpk"][i]["rssi"].is_null())
-                    packet->rxpk_buf[i]->rssi = packjson["rxpk"][i]["rssi"];
+                    packet->rxpk_buf[i].rssi = packjson["rxpk"][i]["rssi"];
                 else
-                    packet->rxpk_buf[i]->rssi = mariadb::value::null;
+                    packet->rxpk_buf[i].rssi = sql::_NULL;
 
                 if(!packjson["rxpk"][i]["datr"].is_null())
-                    packet->rxpk_buf[i]->datrid = packjson["rxpk"][i]["datr"];
+                    packet->rxpk_buf[i].datrid = packjson["rxpk"][i]["datr"];
                 else
-                    packet->rxpk_buf[i]->datrid = mariadb::value::null;
+                    packet->rxpk_buf[i].datrid = "";
 
                 if(!packjson["rxpk"][i]["modu"].is_null()) // TODO DB check
-                    packet->rxpk_buf[i]->modu = packjson["rxpk"][i]["modu"];
+                    packet->rxpk_buf[i].modu = packjson["rxpk"][i]["modu"];
                 else
-                    packet->rxpk_buf[i]->modu = mariadb::value::null;
+                    packet->rxpk_buf[i].modu = "";
 
                 if(!packjson["rxpk"][i]["codr"].is_null())
-                    packet->rxpk_buf[i]->codr = packjson["rxpk"][i]["codr"];
+                    packet->rxpk_buf[i].codr = packjson["rxpk"][i]["codr"];
                 else
-                    packet->rxpk_buf[i]->codr = mariadb::value::null;
+                    packet->rxpk_buf[i].codr = "";
 
                 if(!packjson["rxpk"][i]["lsnr"].is_null())
-                    packet->rxpk_buf[i]->lsnr = packjson["rxpk"][i]["lsnr"];
+                    packet->rxpk_buf[i].lsnr = packjson["rxpk"][i]["lsnr"];
                 else
-                    packet->rxpk_buf[i]->lsnr = mariadb::value::null;
+                    packet->rxpk_buf[i].lsnr = sql::_NULL;
 
                 if(!packjson["rxpk"][i]["size"].is_null())
-                    packet->rxpk_buf[i]->size = packjson["rxpk"][i]["size"];
+                    packet->rxpk_buf[i].size = packjson["rxpk"][i]["size"];
                 else
-                    packet->rxpk_buf[i]->size = mariadb::value::null;
+                    packet->rxpk_buf[i].size = sql::_NULL;
 
                 if(!packjson["rxpk"][i]["data"].is_null())
-                    packet->rxpk_buf[i]->data = packjson["rxpk"][i]["data"];
+                    packet->rxpk_buf[i].data = packjson["rxpk"][i]["data"];
                 else
-                    packet->rxpk_buf[i]->data = mariadb::value::null;
+                    packet->rxpk_buf[i].data = "";
 
             }
-        }*/
+        }
 
         if(!packjson["stat"].is_null()) {
             std::cout << "stat: " << packjson["stat"] << std::endl;
 
-            packet->stat_buf = (stat*) malloc(sizeof(stat));
+            packet->stat_buf = new stat;
             if(!packet->stat_buf) common::handle_error("Can't allocate memory for stat instance");
 
             if(!packjson["stat"]["time"].is_null())
@@ -259,10 +257,10 @@ namespace lorareforwarder::packet {
     void LoRaPacketParser::parsePullJson(const char *string, LoRaPacket* packet) {
         json packjson = json::parse(string);
 
-        /*if(!packjson["txpk"].is_null()) {
+        if(!packjson["txpk"].is_null()) {
             std::cout << "txpk: " << packjson["txpk"] << std::endl;
 
-            packet->txpk_buf = (txpk*) malloc(sizeof(txpk));
+            packet->txpk_buf = new txpk;
             if(!packet->txpk_buf) common::handle_error("Can't allocate memory for txpk instance");
 
             if(packjson["txpk"]["imme"].is_null())
@@ -271,27 +269,27 @@ namespace lorareforwarder::packet {
                 packet->txpk_buf->imme = packjson["txpk"]["imme"];
 
             if(packjson["txpk"]["tmst"].is_null())
-                packet->txpk_buf->tmst = mariadb::value::null;
+                packet->txpk_buf->tmst = sql::_NULL;
             else
                 packet->txpk_buf->tmst = packjson["txpk"]["tmst"];
 
             if(packjson["txpk"]["tmms"].is_null())
-                packet->txpk_buf->tmms = mariadb::value::null;
+                packet->txpk_buf->tmms = sql::_NULL;
             else
                 packet->txpk_buf->tmms = packjson["txpk"]["tmms"];
 
             if(packjson["txpk"]["freq"].is_null())
-                packet->txpk_buf->freq = mariadb::value::null;
+                packet->txpk_buf->freq = sql::_NULL;
             else
                 packet->txpk_buf->freq = packjson["txpk"]["freq"];
 
             if(packjson["txpk"]["rfch"].is_null())
-                packet->txpk_buf->rfch = mariadb::value::null;
+                packet->txpk_buf->rfch = sql::_NULL;
             else
                 packet->txpk_buf->rfch = packjson["txpk"]["rfch"];
 
             if(packjson["txpk"]["powe"].is_null())
-                packet->txpk_buf->powe = mariadb::value::null;
+                packet->txpk_buf->powe = sql::_NULL;
             else
                 packet->txpk_buf->powe = packjson["txpk"]["powe"];
             
@@ -300,29 +298,29 @@ namespace lorareforwarder::packet {
             packet->txpk_buf->datrid = packjson["txpk"]["datrid"].is_null() ? "" : packjson["txpk"]["datrid"];
 
             if(packjson["txpk"]["datr"].is_null()) // TODO Protocol documentation check
-                packet->txpk_buf->datr = mariadb::value::null;
+                packet->txpk_buf->datr = sql::_NULL;
             else
                 packet->txpk_buf->data = packjson["txpk"]["datr"];
             
             packet->txpk_buf->codr = packjson["txpk"]["codr"].is_null() ? "" : packjson["txpk"]["codr"];
 
             if(packjson["txpk"]["fdev"].is_null())
-                packet->txpk_buf->fdev = mariadb::value::null;
+                packet->txpk_buf->fdev = sql::_NULL;
             else
                 packet->txpk_buf->fdev = packjson["txpk"]["fdev"];
 
             if(packjson["txpk"]["ipol"].is_null())
-                packet->txpk_buf->ipol = mariadb::value::null;
+                packet->txpk_buf->ipol = sql::_NULL;
             else
                 packet->txpk_buf->ipol = packjson["txpk"]["ipol"];
 
             if(packjson["txpk"]["prea"].is_null())
-                packet->txpk_buf->prea = mariadb::value::null;
+                packet->txpk_buf->prea = sql::_NULL;
             else
                 packet->txpk_buf->prea = packjson["txpk"]["prea"];
 
             if(packjson["txpk"]["size"].is_null())
-                packet->txpk_buf->size = mariadb::value::null;
+                packet->txpk_buf->size = sql::_NULL;
             else
                 packet->txpk_buf->size = packjson["txpk"]["size"];
 
@@ -332,6 +330,6 @@ namespace lorareforwarder::packet {
                 packet->txpk_buf->ncrc = false;
             else
                 packet->txpk_buf->ncrc = packjson["txpk"]["ncrc"];
-        }*/
+        }
     }
 }
