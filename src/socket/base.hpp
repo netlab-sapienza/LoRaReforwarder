@@ -6,9 +6,10 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <netdb.h>
-#include <string>
+#include <cstring>
 #include <functional>
 #include <cerrno>
+#include <cstdlib>
 
 #include "common/common.hpp"
 

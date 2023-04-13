@@ -11,57 +11,55 @@
 #define PKT_TX_ACK       5
 
 #include <stdlib.h>
-#include <mariadb++/types.hpp>
-
+#include <mariadb/conncpp/Types.hpp>
 namespace lorareforwarder::packet {
     typedef struct {
         bool imme;
-        mariadb::u64 tmst;
-        mariadb::u64 tmms;
-        mariadb::f32 freq;
-        mariadb::u32 rfch;
-        mariadb::u32 powe;
+        uint64_t tmst;
+        uint64_t tmms;
+        float freq;
+        uint32_t rfch;
+        uint32_t powe;
         std::string modu;
         std::string datrid;
-        mariadb::u32 datr;
+        uint32_t datr;
         std::string codr;
-        mariadb::u32 fdev;
+        uint32_t fdev;
         bool ipol;
-        mariadb::u32 prea;
-        mariadb::u32 size;
+        uint32_t prea;
+        uint32_t size;
         std::string data;
         bool ncrc;
     } txpk;
 
     typedef struct {
         std::string time;
-        mariadb::u64 tmms;
-        mariadb::u32 tmst;
-        mariadb::f32 freq;
-        mariadb::u32 chan;
-        mariadb::u32 rfch;
-        mariadb::u32 stat;
+        uint64_t tmms;
+        uint32_t tmst;
+        float freq;
+        uint32_t chan;
+        uint32_t rfch;
+        uint32_t stat;
         std::string modu;
         std::string datrid;
-        mariadb::u32 datr;
         std::string codr;
-        mariadb::s32 rssi;
-        mariadb::f32 lsnr;
-        mariadb::u32 size;
+        int32_t rssi;
+        float lsnr;
+        uint32_t size;
         std::string data;
     } rxpk;
 
     typedef struct {
         std::string time;
-        mariadb::f32 lati;
-        mariadb::f32 longi;
-        mariadb::s32 alti;
-        mariadb::u32 rxnb;
-        mariadb::s32 rxok;
-        mariadb::u32 rxfw;
-        mariadb::s32 ackr;
-        mariadb::u32 dwnb;
-        mariadb::u32 txnb;
+        float lati;
+        float longi;
+        int32_t alti;
+        uint32_t rxnb;
+        int32_t rxok;
+        uint32_t rxfw;
+        int32_t ackr;
+        uint32_t dwnb;
+        uint32_t txnb;
     } stat;
 
     class LoRaPacket {
@@ -79,7 +77,7 @@ namespace lorareforwarder::packet {
 
             uint8_t ack_command;
 
-            rxpk** rxpk_buf;
+            rxpk* rxpk_buf;
             txpk* txpk_buf;
             stat* stat_buf;
 

@@ -2,6 +2,7 @@
 #define LORAREFORWARDER_COMMON_HPP
 
 #include <iostream>
+#include <cstring>
 
 namespace lorareforwarder::common {
     void handle_error(std::string errorMsg);

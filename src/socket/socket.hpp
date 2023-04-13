@@ -10,10 +10,13 @@ class UDPSocket : public BaseSocket {
     public:
         std::function<void(const uint8_t*, int, std::string, std::uint16_t)> onRawMessageReceived;
 
-        explicit UDPSocket(FDR_ON_ERROR, int socketId = -1): BaseSocket(onError, socketId) {
-
-            std::thread socketThread(ReceiveFrom, this);
-            socketThread.detach();
+        explicit UDPSocket(bool shouldThread = true, FDR_ON_ERROR, int socketId = -1): BaseSocket(onError, socketId) {
+            if(shouldThread) {
+                std::thread socketThread(ReceiveFrom, this);
+                socketThread.detach();
+            } else {
+                ReceiveFrom(this);
+            }
         }
         
         void SendTo(const uint8_t *bytes, size_t byteslength, std::string host, uint16_t port, FDR_ON_ERROR) {
