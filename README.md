@@ -23,6 +23,7 @@ Run the project when inside the build folder:
 ./loraReforwarder
 ```
 
+
 **Building and running software using Docker**
 
 Build the project image:
