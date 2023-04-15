@@ -13,7 +13,7 @@
 #include "common/common.hpp"
 using namespace lorareforwarder;
 
-#define SERVER_PORT 8888
+#define SERVER_PORT 1700
 
 #define NETWORK_SERVER_ADDR "63.34.215.128" // "63.34.215.128"
 #define NETWORK_SERVER_PORT 1700
