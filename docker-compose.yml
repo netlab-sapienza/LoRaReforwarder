@@ -33,7 +33,7 @@ services:
     
   lorareforwarder:
     ports:
-      - '1700:1700'
+      - '1700:1700/udp'
     environment:
       - MARIADB_HOST=mariadb
       - MARIADB_USER=lorareforwarder
