@@ -15,7 +15,7 @@ using namespace lorareforwarder;
 
 #define SERVER_PORT 8888
 
-#define NETWORK_SERVER_ADDR "192.168.1.2" // "63.34.215.128"
+#define NETWORK_SERVER_ADDR "63.34.215.128" // "63.34.215.128"
 #define NETWORK_SERVER_PORT 1700
 
 int main(int argc, char const *argv[]) {

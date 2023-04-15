@@ -10,10 +10,12 @@
 #define PKT_PULL_ACK     4
 #define PKT_TX_ACK       5
 
-#include <stdlib.h>
+#include <cstdlib>
+#include <vector>
 #include <mariadb/conncpp/Types.hpp>
+
 namespace lorareforwarder::packet {
-    typedef struct {
+    struct txpk {
         bool imme;
         uint64_t tmst;
         uint64_t tmms;
@@ -21,8 +23,7 @@ namespace lorareforwarder::packet {
         uint32_t rfch;
         uint32_t powe;
         std::string modu;
-        std::string datrid;
-        uint32_t datr;
+        std::string datr;
         std::string codr;
         uint32_t fdev;
         bool ipol;
@@ -30,9 +31,9 @@ namespace lorareforwarder::packet {
         uint32_t size;
         std::string data;
         bool ncrc;
-    } txpk;
+    };
 
-    typedef struct {
+    struct rxpk {
         std::string time;
         uint64_t tmms;
         uint32_t tmst;
@@ -41,15 +42,15 @@ namespace lorareforwarder::packet {
         uint32_t rfch;
         uint32_t stat;
         std::string modu;
-        std::string datrid;
+        std::string datr;
         std::string codr;
         int32_t rssi;
         float lsnr;
         uint32_t size;
         std::string data;
-    } rxpk;
+    };
 
-    typedef struct {
+    struct stat {
         std::string time;
         float lati;
         float longi;
@@ -60,7 +61,7 @@ namespace lorareforwarder::packet {
         int32_t ackr;
         uint32_t dwnb;
         uint32_t txnb;
-    } stat;
+    };
 
     class LoRaPacket {
         public:
@@ -77,7 +78,7 @@ namespace lorareforwarder::packet {
 
             uint8_t ack_command;
 
-            rxpk* rxpk_buf;
+            std::vector<rxpk> rxpk_buf;
             txpk* txpk_buf;
             stat* stat_buf;
 

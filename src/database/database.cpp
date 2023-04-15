@@ -32,7 +32,7 @@ namespace lorareforwarder::database {
         std::string str(macStr);
 
         int last_id = -1;
-        sql::ResultSet *res;
+        int32_t res;
         if(packet->stat_buf) {
             std::cout << "Adding a new stat packet to the database" << std::endl;
 
@@ -49,8 +49,8 @@ namespace lorareforwarder::database {
                 stmnt->setInt(8, packet->stat_buf->ackr);
                 stmnt->setUInt(9, packet->stat_buf->dwnb);
                 stmnt->setUInt(10, packet->stat_buf->txnb);
-                res = stmnt->executeQuery();
-
+            
+                res = stmnt->executeUpdate();
 
                 std::unique_ptr<sql::Statement> stmt(conn->createStatement());
                 std::unique_ptr<sql::ResultSet> resid(stmt->executeQuery("SELECT LAST_INSERT_ID() AS id"));
@@ -62,10 +62,12 @@ namespace lorareforwarder::database {
             }
         }
 
-        if(packet->rxpk_buf) {
+        if(packet->rxpk_buf.size() > 0) {
             std::cout << "Adding a new push packet to the database" << std::endl;
+            
+            for(int i = 0; i < packet->rxpk_buf.size(); i++) {
+                std::cout << "Adding a new push packet to the database" << std::endl;
 
-            for(int i = 0; i < sizeof(packet->rxpk_buf)/sizeof(packet->rxpk_buf[0]); i++) {
                 try {
                     std::unique_ptr<sql::PreparedStatement> stmnt(conn->prepareStatement("INSERT INTO pushPackets (gwui, time, tmms, tmst, freq, chan, rfch, stat, modu, datr, codr, rssi, lsnr, size, data, statId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
 
@@ -78,7 +80,7 @@ namespace lorareforwarder::database {
                     stmnt->setUInt(7, packet->rxpk_buf[i].rfch);
                     stmnt->setShort(8, packet->rxpk_buf[i].stat);
                     stmnt->setString(9, packet->rxpk_buf[i].modu);
-                    stmnt->setString(10, packet->rxpk_buf[i].datrid);
+                    stmnt->setString(10, packet->rxpk_buf[i].datr);
                     stmnt->setString(11, packet->rxpk_buf[i].codr);
                     stmnt->setInt(12, packet->rxpk_buf[i].rssi);
                     stmnt->setFloat(13, packet->rxpk_buf[i].lsnr);
@@ -88,7 +90,7 @@ namespace lorareforwarder::database {
                     if(last_id > -1) stmnt->setUInt64(16, last_id);
                     else stmnt->setUInt64(16, sql::_NULL);
 
-                    res = stmnt->executeQuery();
+                    res = stmnt->executeUpdate();
                 } catch(sql::SQLException& e){
                     std::cerr << "Error inserting new push packet: " << e.what() << std::endl;
                 }
@@ -107,7 +109,7 @@ namespace lorareforwarder::database {
             std::cout << "Adding a new pull packet to the database" << std::endl;
 
             try {
-                std::unique_ptr<sql::PreparedStatement> stmnt(conn->prepareStatement("INSERT INTO pullPackets (imme, tmst, tmms, freq, rfch, powe, modu, datrid, datr, codr, fdev, ipol, prea, size, data, ncrc) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
+                std::unique_ptr<sql::PreparedStatement> stmnt(conn->prepareStatement("INSERT INTO pullPackets (imme, tmst, tmms, freq, rfch, powe, modu, datr, codr, fdev, ipol, prea, size, data, ncrc) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
 
                 stmnt->setBoolean(1, packet->txpk_buf->imme);
                 stmnt->setUInt64(2, packet->txpk_buf->tmst);
@@ -116,17 +118,16 @@ namespace lorareforwarder::database {
                 stmnt->setUInt(5, packet->txpk_buf->rfch);
                 stmnt->setUInt(6, packet->txpk_buf->powe);
                 stmnt->setString(7, packet->txpk_buf->modu);
-                stmnt->setString(8, packet->txpk_buf->datrid);
-                stmnt->setUInt(9, packet->txpk_buf->datr);
-                stmnt->setString(10, packet->txpk_buf->codr);
-                stmnt->setUInt(11, packet->txpk_buf->fdev);
-                stmnt->setBoolean(12, packet->txpk_buf->ipol);
-                stmnt->setUInt(13, packet->txpk_buf->prea);
-                stmnt->setUInt(14, packet->txpk_buf->size);
-                stmnt->setString(15, packet->txpk_buf->data);
-                stmnt->setBoolean(16, packet->txpk_buf->ncrc);
+                stmnt->setString(8, packet->txpk_buf->datr);
+                stmnt->setString(9, packet->txpk_buf->codr);
+                stmnt->setUInt(10, packet->txpk_buf->fdev);
+                stmnt->setBoolean(11, packet->txpk_buf->ipol);
+                stmnt->setUInt(12, packet->txpk_buf->prea);
+                stmnt->setUInt(13, packet->txpk_buf->size);
+                stmnt->setString(14, packet->txpk_buf->data);
+                stmnt->setBoolean(15, packet->txpk_buf->ncrc);
                 
-                stmnt->executeQuery();
+                stmnt->executeUpdate();
             } catch(sql::SQLException& e){
                 std::cerr << "Error inserting new pull packet: " << e.what() << std::endl;
             }
