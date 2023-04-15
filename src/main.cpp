@@ -26,7 +26,7 @@ using namespace lorareforwarder;
 
 int main(int argc, char const *argv[]) {
     database::Database database(MARIADB_SERVER_ADDR, MARIADB_USERNAME, MARIADB_PWD, MARIADB_SERVER_DB, MARIADB_SERVER_PORT);
-    
+
     server::LoRaServer server(SERVER_PORT, database, NETWORK_SERVER_ADDR, NETWORK_SERVER_PORT);
     server.init();
 }

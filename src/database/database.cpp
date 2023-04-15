@@ -14,8 +14,11 @@ namespace lorareforwarder::database {
             sql::Properties properties({{"user", user_name}, {"password", password}});
 
             conn = Database::generateConnection(driver, url, properties);
+
+            connected = true;
         } catch(sql::SQLException& e){
             std::cerr << "Error when enstablishing connection: " << e.what() << std::endl;
+            exit(-1);
         }
     }
 

@@ -11,6 +11,8 @@ namespace lorareforwarder::database {
             explicit Database(const std::string &host_name, const std::string &user_name, const std::string &password,
                               const std::string &schema, uint32_t port);
             ~Database();
+
+            bool isConnected() { return connected; }
             
             void insertPushDataPacket(packet::LoRaPacket* packet);
             void insertPullDataPacket(packet::LoRaPacket* packet);
@@ -25,6 +27,7 @@ namespace lorareforwarder::database {
             }
         private:
             std::unique_ptr<sql::Connection> conn;
+            bool connected = false;
     };
 }
 
