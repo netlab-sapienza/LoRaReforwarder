@@ -79,8 +79,10 @@ namespace lorareforwarder::packet {
             uint8_t ack_command;
 
             std::vector<rxpk> rxpk_buf;
-            txpk* txpk_buf;
             stat* stat_buf;
+            uint16_t statCount = 0;
+
+            txpk* txpk_buf;
 
             bool isValid = true;
     };

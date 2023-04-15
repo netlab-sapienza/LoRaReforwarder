@@ -33,7 +33,7 @@ namespace lorareforwarder::database {
 
         int last_id = -1;
         int32_t res;
-        if(packet->stat_buf) {
+        if(packet->statCount > 0) {
             std::cout << "Adding a new stat packet to the database" << std::endl;
 
             try {

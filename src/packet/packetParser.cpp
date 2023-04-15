@@ -213,6 +213,8 @@ namespace lorareforwarder::packet {
             packet->stat_buf = new stat;
             if(!packet->stat_buf) common::handle_error("Can't allocate memory for stat instance");
 
+            packet->statCount++;
+
             if(!packjson["stat"]["time"].is_null())
                 packet->stat_buf->time = packjson["stat"]["time"];
             else
