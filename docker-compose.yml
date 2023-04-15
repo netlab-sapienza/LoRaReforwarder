@@ -1,0 +1,58 @@
+version: '3.8'
+services:
+  mariadb:
+    image: mariadb:latest
+    restart: always
+    ports:
+      - 3306:3306
+    command: --init-file /data/init.sql
+    volumes:
+      - mariadb-data:/var/lib/mysql
+      - ./init.sql:/data/init.sql
+    environment:
+      MYSQL_ROOT_PASSWORD: 2BAS3PaZQ6BBySwv
+      MYSQL_DATABASE: lorareforwarder
+      MYSQL_USER: lorareforwarder
+      MYSQL_PASSWORD: lorareforwarderpwd
+    networks:
+      database_network:
+        ipv4_address: 172.18.0.2
+
+  phpmyadmin:
+    image: arm64v8/phpmyadmin:latest
+    restart: always
+    ports:
+      - 8089:80
+    environment:
+      - PMA_HOST=mariadb
+    networks:
+      database_network:
+        ipv4_address: 172.18.0.4
+    depends_on:
+      - mariadb
+    
+  lorareforwarder:
+    ports:
+      - '1700:1700'
+    environment:
+      - MARIADB_HOST=mariadb
+      - MARIADB_USER=lorareforwarder
+      - MARIADB_PWD=lorareforwarder
+      - MARIADB_DB=lorareforwarder
+    networks:
+      database_network:
+        ipv4_address: 172.18.0.3
+    depends_on:
+      - mariadb
+    image: 'netlab-sapienza/lorareforwarder:latest'
+
+volumes:
+  mariadb-data:
+
+networks:
+  database_network:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 172.18.0.0/24
+         gateway: 172.18.0.1

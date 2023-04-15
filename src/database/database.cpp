@@ -37,7 +37,7 @@ namespace lorareforwarder::database {
             std::cout << "Adding a new stat packet to the database" << std::endl;
 
             try {
-                std::unique_ptr<sql::PreparedStatement> stmnt(conn->prepareStatement("INSERT INTO pushStats (time, lati, longi, alti, rxnb, rxok, rxfw, ackr, dwnb, txnb) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
+                std::unique_ptr<sql::PreparedStatement> stmnt(conn->prepareStatement("INSERT INTO statPackets (time, lati, longi, alti, rxnb, rxok, rxfw, ackr, dwnb, txnb) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
 
                 stmnt->setString(1, packet->stat_buf->time);
                 stmnt->setFloat(2, packet->stat_buf->lati);
