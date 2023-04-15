@@ -11,14 +11,27 @@ Software requirements:
 
 **Building and running commands**
 
-Building the project:
+Build the project:
 ```sh
 mkdir build && cd build
 cmake ..
 make
 ```
 
-Building and run the project when inside the build folder:
+Run the project when inside the build folder:
 ```sh
 ./loraReforwarder
 ```
+
+**Building and running software using Docker**
+
+Build the project image:
+```sh
+docker build . -t netlab-sapienza/lorareforwarder
+```
+
+Run the project on Docker:
+```sh
+docker-compose up -d
+```
+
