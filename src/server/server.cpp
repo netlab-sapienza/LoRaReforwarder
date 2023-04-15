@@ -3,8 +3,8 @@
 #include <unistd.h>
 #include <iostream>
 #include <future>
-#include <errno.h>
-#include <string>
+#include <cerrno>
+#include <cstring>
 
 #include "packet/packetParser.hpp"
 #include "socket/server.hpp"

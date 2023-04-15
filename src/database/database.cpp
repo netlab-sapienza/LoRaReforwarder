@@ -69,7 +69,7 @@ namespace lorareforwarder::database {
                 std::cout << "Adding a new push packet to the database" << std::endl;
 
                 try {
-                    std::unique_ptr<sql::PreparedStatement> stmnt(conn->prepareStatement("INSERT INTO pushPackets (gwui, time, tmms, tmst, freq, chan, rfch, stat, modu, datr, codr, rssi, lsnr, size, data, statId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
+                    std::unique_ptr<sql::PreparedStatement> stmnt(conn->prepareStatement("INSERT INTO upPackets (gwui, time, tmms, tmst, freq, chan, rfch, stat, modu, datr, codr, rssi, lsnr, size, data, statId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
 
                     stmnt->setString(1, macStr);
                     stmnt->setString(2, packet->rxpk_buf[i].time);
@@ -109,7 +109,7 @@ namespace lorareforwarder::database {
             std::cout << "Adding a new pull packet to the database" << std::endl;
 
             try {
-                std::unique_ptr<sql::PreparedStatement> stmnt(conn->prepareStatement("INSERT INTO pullPackets (imme, tmst, tmms, freq, rfch, powe, modu, datr, codr, fdev, ipol, prea, size, data, ncrc) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
+                std::unique_ptr<sql::PreparedStatement> stmnt(conn->prepareStatement("INSERT INTO downPackets (imme, tmst, tmms, freq, rfch, powe, modu, datr, codr, fdev, ipol, prea, size, data, ncrc) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
 
                 stmnt->setBoolean(1, packet->txpk_buf->imme);
                 stmnt->setUInt64(2, packet->txpk_buf->tmst);

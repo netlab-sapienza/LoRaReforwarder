@@ -81,7 +81,7 @@ namespace lorareforwarder::packet {
             case PKT_PULL_DATA: {
                 packet->type = PKT_PULL_DATA;
 
-                //printf("PULL_DATA from gateway 0x%08X%08X\n", (uint32_t)(packet->gw_mac >> 32), (uint32_t)(packet->gw_mac & 0xFFFFFFFF));
+                printf("PULL_DATA from gateway 0x%08X%08X\n", (uint32_t)(packet->gw_mac >> 32), (uint32_t)(packet->gw_mac & 0xFFFFFFFF));
                 packet->ack_command = PKT_PULL_ACK;
                 break;
             }
@@ -89,7 +89,6 @@ namespace lorareforwarder::packet {
                 packet->type = PKT_PULL_RESP;
 
                 char* string = (char*) (packet_buf + 4);
-                //printf("La stringa che contiene e' %s\n", string);
                 parsePullJson(string, packet);
                 break;
             }
@@ -102,7 +101,7 @@ namespace lorareforwarder::packet {
                 break;
             }
             default: {
-                printf("Unexpected command %u\n", packet_buf[3]);
+                printf("Invalid packet %u\n", packet_buf[3]);
                 packet->isValid = false;
             }
         };  
@@ -199,7 +198,6 @@ namespace lorareforwarder::packet {
                     }
                     else
                         packet->rxpk_buf[i].data = sql::_NULL;
-
                 }
 
             } catch (std::exception const& e) {
