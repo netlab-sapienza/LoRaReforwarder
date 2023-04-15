@@ -39,7 +39,7 @@ namespace lorareforwarder::database {
             try {
                 std::unique_ptr<sql::PreparedStatement> stmnt(conn->prepareStatement("INSERT INTO statPackets (time, lati, longi, alti, rxnb, rxok, rxfw, ackr, dwnb, txnb) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
 
-                stmnt->setString(1, packet->stat_buf->time);
+                stmnt->setString(1, packet->stat_buf->time.c_str());
                 stmnt->setFloat(2, packet->stat_buf->lati);
                 stmnt->setFloat(3, packet->stat_buf->longi);
                 stmnt->setInt(4, packet->stat_buf->alti);
@@ -72,20 +72,20 @@ namespace lorareforwarder::database {
                     std::unique_ptr<sql::PreparedStatement> stmnt(conn->prepareStatement("INSERT INTO upPackets (gwui, time, tmms, tmst, freq, chan, rfch, stat, modu, datr, codr, rssi, lsnr, size, data, statId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
 
                     stmnt->setString(1, macStr);
-                    stmnt->setString(2, packet->rxpk_buf[i].time);
+                    stmnt->setString(2, packet->rxpk_buf[i].time.c_str());
                     stmnt->setUInt64(3, packet->rxpk_buf[i].tmms);
                     stmnt->setUInt(4, packet->rxpk_buf[i].tmst);
                     stmnt->setFloat(5, packet->rxpk_buf[i].freq);
                     stmnt->setUInt(6, packet->rxpk_buf[i].chan);
                     stmnt->setUInt(7, packet->rxpk_buf[i].rfch);
                     stmnt->setShort(8, packet->rxpk_buf[i].stat);
-                    stmnt->setString(9, packet->rxpk_buf[i].modu);
-                    stmnt->setString(10, packet->rxpk_buf[i].datr);
-                    stmnt->setString(11, packet->rxpk_buf[i].codr);
+                    stmnt->setString(9, packet->rxpk_buf[i].modu.c_str());
+                    stmnt->setString(10, packet->rxpk_buf[i].datr.c_str());
+                    stmnt->setString(11, packet->rxpk_buf[i].codr.c_str());
                     stmnt->setInt(12, packet->rxpk_buf[i].rssi);
                     stmnt->setFloat(13, packet->rxpk_buf[i].lsnr);
                     stmnt->setUInt(14, packet->rxpk_buf[i].size);
-                    stmnt->setString(15, packet->rxpk_buf[i].data);
+                    stmnt->setString(15, packet->rxpk_buf[i].data.c_str());
 
                     if(last_id > -1) stmnt->setUInt64(16, last_id);
                     else stmnt->setUInt64(16, sql::_NULL);
@@ -117,14 +117,14 @@ namespace lorareforwarder::database {
                 stmnt->setFloat(4, packet->txpk_buf->freq);
                 stmnt->setUInt(5, packet->txpk_buf->rfch);
                 stmnt->setUInt(6, packet->txpk_buf->powe);
-                stmnt->setString(7, packet->txpk_buf->modu);
-                stmnt->setString(8, packet->txpk_buf->datr);
-                stmnt->setString(9, packet->txpk_buf->codr);
+                stmnt->setString(7, packet->txpk_buf->modu.c_str());
+                stmnt->setString(8, packet->txpk_buf->datr.c_str());
+                stmnt->setString(9, packet->txpk_buf->codr.c_str());
                 stmnt->setUInt(10, packet->txpk_buf->fdev);
                 stmnt->setBoolean(11, packet->txpk_buf->ipol);
                 stmnt->setUInt(12, packet->txpk_buf->prea);
                 stmnt->setUInt(13, packet->txpk_buf->size);
-                stmnt->setString(14, packet->txpk_buf->data);
+                stmnt->setString(14, packet->txpk_buf->data.c_str());
                 stmnt->setBoolean(15, packet->txpk_buf->ncrc);
                 
                 stmnt->executeUpdate();

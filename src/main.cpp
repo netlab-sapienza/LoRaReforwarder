@@ -18,7 +18,7 @@ using namespace lorareforwarder;
 #define NETWORK_SERVER_ADDR "63.34.215.128" // "63.34.215.128"
 #define NETWORK_SERVER_PORT 1700
 
-#define MARIADB_SERVER_ADDR "172.18.0.2"
+#define MARIADB_SERVER_ADDR "10.6.0.2"
 #define MARIADB_SERVER_PORT 3306
 #define MARIADB_USERNAME "lorareforwarder"
 #define MARIADB_PWD "lorareforwarderpwd"

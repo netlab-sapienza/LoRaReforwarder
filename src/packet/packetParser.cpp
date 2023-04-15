@@ -124,7 +124,7 @@ namespace lorareforwarder::packet {
                         std::string time = packjson["rxpk"][i]["time"];
                         packet->rxpk_buf[i].time = time;
                     } else
-                        packet->rxpk_buf[i].time = sql::_NULL;
+                        packet->rxpk_buf[i].time = "";
 
                     if(!packjson["rxpk"][i]["tmms"].is_null())
                         packet->rxpk_buf[i].tmms = packjson["rxpk"][i]["tmms"];
@@ -166,21 +166,21 @@ namespace lorareforwarder::packet {
                         packet->rxpk_buf[i].datr = datr;
                     }
                     else
-                        packet->rxpk_buf[i].datr = sql::_NULL;
+                        packet->rxpk_buf[i].datr = "";
 
                     if(!packjson["rxpk"][i]["modu"].is_null()) { // TODO DB check
                         std::string modu = packjson["rxpk"][i]["modu"];
                         packet->rxpk_buf[i].modu = modu;
                     }
                     else
-                        packet->rxpk_buf[i].modu = sql::_NULL;
+                        packet->rxpk_buf[i].modu = "";
 
                     if(!packjson["rxpk"][i]["codr"].is_null()) {
                         std::string codr = packjson["rxpk"][i]["codr"];
                         packet->rxpk_buf[i].codr = codr;
                     }
                     else
-                        packet->rxpk_buf[i].codr = sql::_NULL;
+                        packet->rxpk_buf[i].codr = "";
 
                     if(!packjson["rxpk"][i]["lsnr"].is_null())
                         packet->rxpk_buf[i].lsnr = packjson["rxpk"][i]["lsnr"];
@@ -197,7 +197,7 @@ namespace lorareforwarder::packet {
                         packet->rxpk_buf[i].data = packjson["rxpk"][i]["data"];
                     }
                     else
-                        packet->rxpk_buf[i].data = sql::_NULL;
+                        packet->rxpk_buf[i].data = "";
                 }
 
             } catch (std::exception const& e) {
@@ -216,7 +216,7 @@ namespace lorareforwarder::packet {
             if(!packjson["stat"]["time"].is_null())
                 packet->stat_buf->time = packjson["stat"]["time"];
             else
-                packet->stat_buf->time = sql::_NULL;
+                packet->stat_buf->time = "";
 
             if(!packjson["stat"]["lati"].is_null())
                 packet->stat_buf->lati = packjson["stat"]["lati"];
@@ -305,17 +305,17 @@ namespace lorareforwarder::packet {
                 packet->txpk_buf->powe = packjson["txpk"]["powe"];
 
             if(packjson["txpk"]["modu"].is_null())
-                packet->txpk_buf->modu = sql::_NULL;
+                packet->txpk_buf->modu = "";
             else
                 packet->txpk_buf->modu = packjson["txpk"]["modu"];
 
             if(packjson["txpk"]["datr"].is_null())
-                packet->txpk_buf->datr = sql::_NULL;
+                packet->txpk_buf->datr = "";
             else
                 packet->txpk_buf->datr = packjson["txpk"]["datr"];
 
             if(packjson["txpk"]["codr"].is_null())
-                packet->txpk_buf->codr = sql::_NULL;
+                packet->txpk_buf->codr = "";
             else
                 packet->txpk_buf->codr = packjson["txpk"]["codr"];
             
