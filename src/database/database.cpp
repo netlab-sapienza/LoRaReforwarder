@@ -34,7 +34,7 @@ namespace lorareforwarder::database {
         snprintf(macStr, sizeof(macStr), "%08X%08X", (uint32_t)(packet->gw_mac >> 32), (uint32_t)(packet->gw_mac & 0xFFFFFFFF));
         std::string str(macStr);
 
-        int last_id = -1;
+        int64_t last_id = 0;
         int32_t res;
         if(packet->statCount > 0) {
             std::cout << "Adding a new stat packet to the database" << std::endl;
@@ -54,12 +54,15 @@ namespace lorareforwarder::database {
                 stmnt->setUInt(10, packet->stat_buf->txnb);
             
                 res = stmnt->executeUpdate();
-
-                std::unique_ptr<sql::Statement> stmt(conn->createStatement());
-                std::unique_ptr<sql::ResultSet> resid(stmt->executeQuery("SELECT LAST_INSERT_ID() AS id"));
-                if(resid->next())
-                    last_id = resid->getInt64("id");
-
+                if(res > 0) {
+                    std::unique_ptr<sql::Statement> stmt(conn->createStatement());
+                    std::unique_ptr<sql::ResultSet> resid(stmt->executeQuery("SELECT LAST_INSERT_ID() as id"));
+                    std::unique_ptr<sql::ResultSetMetaData> rsmd(resid->getMetaData());
+                    int columnsNumber = rsmd->getColumnCount();
+                    if (resid->next()) {
+                        last_id = resid->getInt64("id");
+                    }
+                }
             } catch(sql::SQLException& e){
                 std::cerr << "Error inserting new stat packet: " << e.what() << std::endl;
             }
@@ -90,8 +93,8 @@ namespace lorareforwarder::database {
                     stmnt->setUInt(14, packet->rxpk_buf[i].size);
                     stmnt->setString(15, packet->rxpk_buf[i].data.c_str());
 
-                    if(last_id > -1) stmnt->setUInt64(16, last_id);
-                    else stmnt->setUInt64(16, sql::_NULL);
+                    if(last_id > 0) stmnt->setInt64(16, last_id);
+                    else stmnt->setNull(16, sql::_NULL);
 
                     res = stmnt->executeUpdate();
                 } catch(sql::SQLException& e){
