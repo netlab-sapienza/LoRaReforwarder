@@ -10,4 +10,11 @@ namespace lorareforwarder::common {
         std::cout << "Runtime Error, Number: " << _errno << " - " << errorMsg << std::endl;
         exit(EXIT_FAILURE);
     }
+
+    std::string hostToIp(const std::string& host) {
+        hostent* hostname = gethostbyname(host.c_str());
+        if(hostname)
+            return std::string(inet_ntoa(**(in_addr**)hostname->h_addr_list));
+        return {};
+    }
 }

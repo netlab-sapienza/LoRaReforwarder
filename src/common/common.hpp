@@ -3,10 +3,13 @@
 
 #include <iostream>
 #include <cstring>
+#include <netdb.h>
+#include <arpa/inet.h>
 
 namespace lorareforwarder::common {
     void handle_error(std::string errorMsg);
     void handle_error_en(int _errno, std::string errorMsg);
+    std::string hostToIp(const std::string& host);
 }
 
 #endif /* LORAREFORWARDER_COMMON_HPP */

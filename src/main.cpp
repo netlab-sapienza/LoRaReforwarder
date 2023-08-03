@@ -6,27 +6,30 @@
 
 #include <signal.h>
 #include <stdlib.h>
-#include <stdio.h>
+
+#include <iostream>
+
+#include "dotenv.h"
 
 #include "server/server.hpp"
 #include "database/database.hpp"
 #include "common/common.hpp"
 using namespace lorareforwarder;
 
-#define SERVER_PORT 1700
-
-#define NETWORK_SERVER_ADDR "63.34.215.128" // "63.34.215.128"
-#define NETWORK_SERVER_PORT 1700
-
-#define MARIADB_SERVER_ADDR "172.18.0.2"
-#define MARIADB_SERVER_PORT 3306
-#define MARIADB_USERNAME "lorareforwarder"
-#define MARIADB_PWD "lorareforwarderpwd"
-#define MARIADB_SERVER_DB "lorareforwarder"
-
 int main(int argc, char const *argv[]) {
-    database::Database database(MARIADB_SERVER_ADDR, MARIADB_USERNAME, MARIADB_PWD, MARIADB_SERVER_DB, MARIADB_SERVER_PORT);
+    auto& dotenv = dotenv::env.load_dotenv(".env");
 
-    server::LoRaServer server(SERVER_PORT, database, NETWORK_SERVER_ADDR, NETWORK_SERVER_PORT);
+    // TODO: Env variable content check
+    uint16_t serverPort = static_cast<uint16_t>(std::stoul(dotenv["SERVER_PORT"]));
+    uint16_t networkServerPort = static_cast<uint16_t>(std::stoul(dotenv["NETWORK_SERVER_PORT"]));
+    uint32_t mariadbServerPort = std::stoul(dotenv["MARIADB_SERVER_PORT"]);
+
+    // DEBUG
+    std::cout << serverPort << " " << networkServerPort << " " << mariadbServerPort << std::endl;
+    std::cout << dotenv["MARIADB_SERVER_ADDR"] << " " << dotenv["MARIADB_SERVER_USERNAME"] << " " << dotenv["MARIADB_SERVER_PWD"] << " " << dotenv["MARIADB_SERVER_DBNAME"] << std::endl;
+    std::cout << dotenv["NETWORK_SERVER_ADDR"] << std::endl;
+
+    database::Database database(dotenv["MARIADB_SERVER_ADDR"], dotenv["MARIADB_SERVER_USERNAME"], dotenv["MARIADB_SERVER_PWD"], dotenv["MARIADB_SERVER_DBNAME"], mariadbServerPort);
+    server::LoRaServer server(serverPort, database, dotenv["NETWORK_SERVER_ADDR"], networkServerPort);
     server.init();
 }

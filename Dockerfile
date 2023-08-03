@@ -12,6 +12,7 @@ WORKDIR /lorareforwarder
 COPY src/ ./src/
 COPY third_party ./third_party
 COPY CMakeLists.txt .
+COPY .env .
 
 WORKDIR /lorareforwarder/third_party/mariadb-connector-cpp/build
 RUN cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCONC_WITH_UNIT_TESTS=Off -DCMAKE_INSTALL_PREFIX=/usr/local -DWITH_SSL=OPENSSL && \ 
@@ -21,6 +22,7 @@ RUN cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCONC_WITH_UNIT_TESTS=Off -DCMAK
 ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/lib/mariadb"
 
 WORKDIR /lorareforwarder/build
+COPY ../.env .
 RUN cmake .. && \
     cmake --build . --parallel 8
 

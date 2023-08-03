@@ -36,7 +36,7 @@ namespace lorareforwarder::database {
 
         int64_t last_id = 0;
         int32_t res;
-        if(packet->statCount > 0) {
+        /*if(packet->statCount > 0) {
             std::cout << "Adding a new stat packet to the database" << std::endl;
 
             try {
@@ -66,7 +66,7 @@ namespace lorareforwarder::database {
             } catch(sql::SQLException& e){
                 std::cerr << "Error inserting new stat packet: " << e.what() << std::endl;
             }
-        }
+        }*/
 
         if(packet->rxpk_buf.size() > 0) {
             std::cout << "Adding a new push packet to the database" << std::endl;
@@ -92,9 +92,8 @@ namespace lorareforwarder::database {
                     stmnt->setFloat(13, packet->rxpk_buf[i].lsnr);
                     stmnt->setUInt(14, packet->rxpk_buf[i].size);
                     stmnt->setString(15, packet->rxpk_buf[i].data.c_str());
-
-                    if(last_id > 0) stmnt->setInt64(16, last_id);
-                    else stmnt->setNull(16, sql::_NULL);
+                    
+                    stmnt->setNull(16, sql::_NULL);
 
                     res = stmnt->executeUpdate();
                 } catch(sql::SQLException& e){

@@ -1,6 +1,9 @@
 [submodule "third_party/json"]
 	path = third_party/json
-	url = git@github.com:nlohmann/json.git
+	url = https://github.com/nlohmann/json.git
 [submodule "third_party/mariadb-connector-cpp"]
 	path = third_party/mariadb-connector-cpp
-	url = git@github.com:mariadb-corporation/mariadb-connector-cpp.git
+	url = https://github.com/mariadb-corporation/mariadb-connector-cpp.git
+[submodule "third_party/cpp-dotenv"]
+	path = third_party/cpp-dotenv
+	url = https://github.com/adeharo9/cpp-dotenv.git

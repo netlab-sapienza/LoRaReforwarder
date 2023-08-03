@@ -207,7 +207,7 @@ namespace lorareforwarder::packet {
             }
         }
 
-        if(!packjson["stat"].is_null()) {
+        /*if(!packjson["stat"].is_null()) {
             std::cout << "stat: " << packjson["stat"] << std::endl;
 
             packet->stat_buf = new stat;
@@ -264,7 +264,7 @@ namespace lorareforwarder::packet {
                 packet->stat_buf->txnb = packjson["stat"]["txnb"];
             else
                 packet->stat_buf->txnb = sql::_NULL;
-        }
+        }*/
     }
 
     void LoRaPacketParser::parsePullJson(const char *string, LoRaPacket* packet) {

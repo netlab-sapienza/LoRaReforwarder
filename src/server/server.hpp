@@ -6,7 +6,7 @@
 namespace lorareforwarder::server {
     class LoRaServer {
         public:
-            explicit LoRaServer(uint16_t _port, database::Database& _database, std::string _netserver_host, uint16_t _netserver_port) : port {_port}, database {_database}, netserver_host {_netserver_host}, netserver_port {_netserver_port} { }
+            explicit LoRaServer(uint16_t _port, database::Database& _database, std::string _netserver_host, uint16_t _netserver_port) : port {_port}, database {_database}, netserver_hostname {_netserver_host}, netserver_port {_netserver_port} { }
             ~LoRaServer();
             void init();
         private:
@@ -14,7 +14,7 @@ namespace lorareforwarder::server {
             database::Database& database;
             static const int BUFFER_SIZE = 4096;
 
-            std::string netserver_host;
+            std::string netserver_hostname, netserver_host;
             uint16_t netserver_port;
 
             typedef struct {

@@ -15,6 +15,8 @@ namespace lorareforwarder::server {
     LoRaServer::~LoRaServer() = default;
 
     void LoRaServer::init() {
+        netserver_host = common::hostToIp(netserver_hostname);
+
         UDPServer udpServer;
 
         UDPSocket socket(true, [](int errorCode, std::string errorMessage) {

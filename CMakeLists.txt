@@ -9,10 +9,11 @@ project(loraReforwarder)
 find_package(Threads REQUIRED)
 
 add_subdirectory(third_party/json)
+add_subdirectory(third_party/cpp-dotenv)
 
 include_directories(src)
 
 file(GLOB_RECURSE SRCS src/*.cpp)
 
 add_executable(${PROJECT_NAME} ${SRCS})
-target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json mariadbcpp Threads::Threads)
+target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json mariadbcpp Threads::Threads antlr4_cpp_runtime cpp_dotenv)
