@@ -24,7 +24,7 @@ namespace lorareforwarder::server {
         });
 
         udpServer.onRawMessageReceived = [&](const uint8_t* message, int length, std::string ipv4, uint16_t port)  {
-            std::cout << ipv4 << ":" << port << " => " << message << "(" << length << ")" << " => " << packet::LoRaPacketParser::getPacketType(message[3]) << std::endl;
+            if (debug) std::cout << ipv4 << ":" << port << " => " << message << "(" << length << ")" << " => " << packet::LoRaPacketParser::getPacketType(message[3]) << std::endl;
             socket.SendTo(message, length, netserver_host, netserver_port);
 
             if(packet::LoRaPacketParser::getPacketType(message[3]) == "PKT_PUSH_DATA") {
@@ -35,7 +35,7 @@ namespace lorareforwarder::server {
             }
             
             socket.onRawMessageReceived = [&](const uint8_t* servermessage, int serverlength, std::string serveripv4, uint16_t serverport) {
-                std::cout << "SERVER " << serveripv4 << ":" << serverport << " => " << servermessage << "(" << serverlength << ")" << " => " << packet::LoRaPacketParser::getPacketType(servermessage[3]) << std::endl;                
+                if (debug) std::cout << "SERVER " << serveripv4 << ":" << serverport << " => " << servermessage << "(" << serverlength << ")" << " => " << packet::LoRaPacketParser::getPacketType(servermessage[3]) << std::endl;                
                 udpServer.SendTo(servermessage, serverlength, ipv4, port);
 
                 if(packet::LoRaPacketParser::getPacketType(servermessage[3]) == "PKT_PULL_RESP") {

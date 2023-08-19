@@ -5,8 +5,8 @@ RUN apk update && \
         clang15=15.0.7-r0 \
         cmake=3.24.4-r0 \
         boost1.80-dev=1.80.0-r3 \
-        mariadb-dev=10.6.12-r0 \
-        mariadb-client=10.6.12-r0
+        mariadb-dev=10.6.14-r0 \
+        mariadb-client=10.6.14-r0
 
 WORKDIR /lorareforwarder
 COPY src/ ./src/

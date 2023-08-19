@@ -6,7 +6,7 @@
 namespace lorareforwarder::database {
 
     Database::Database(const std::string &host_name, const std::string &user_name, const std::string &password, 
-                       const std::string &schema, uint32_t port) {
+                       const std::string &schema, uint32_t port, bool _debug) {
         try {
             sql::Driver* driver = sql::mariadb::get_driver_instance();
 
@@ -16,6 +16,7 @@ namespace lorareforwarder::database {
             conn = Database::generateConnection(driver, url, properties);
 
             connected = true;
+            debug = _debug;
         } catch(sql::SQLException& e){
             std::cerr << "Error when enstablishing connection: " << e.what() << std::endl;
             exit(-1);
@@ -36,43 +37,12 @@ namespace lorareforwarder::database {
 
         int64_t last_id = 0;
         int32_t res;
-        /*if(packet->statCount > 0) {
-            std::cout << "Adding a new stat packet to the database" << std::endl;
-
-            try {
-                std::unique_ptr<sql::PreparedStatement> stmnt(conn->prepareStatement("INSERT INTO statPackets (time, lati, longi, alti, rxnb, rxok, rxfw, ackr, dwnb, txnb) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
-
-                stmnt->setString(1, packet->stat_buf->time.c_str());
-                stmnt->setFloat(2, packet->stat_buf->lati);
-                stmnt->setFloat(3, packet->stat_buf->longi);
-                stmnt->setInt(4, packet->stat_buf->alti);
-                stmnt->setUInt(5, packet->stat_buf->rxnb);
-                stmnt->setInt(6, packet->stat_buf->rxok);
-                stmnt->setUInt(7, packet->stat_buf->rxfw);
-                stmnt->setInt(8, packet->stat_buf->ackr);
-                stmnt->setUInt(9, packet->stat_buf->dwnb);
-                stmnt->setUInt(10, packet->stat_buf->txnb);
-            
-                res = stmnt->executeUpdate();
-                if(res > 0) {
-                    std::unique_ptr<sql::Statement> stmt(conn->createStatement());
-                    std::unique_ptr<sql::ResultSet> resid(stmt->executeQuery("SELECT LAST_INSERT_ID() as id"));
-                    std::unique_ptr<sql::ResultSetMetaData> rsmd(resid->getMetaData());
-                    int columnsNumber = rsmd->getColumnCount();
-                    if (resid->next()) {
-                        last_id = resid->getInt64("id");
-                    }
-                }
-            } catch(sql::SQLException& e){
-                std::cerr << "Error inserting new stat packet: " << e.what() << std::endl;
-            }
-        }*/
 
         if(packet->rxpk_buf.size() > 0) {
-            std::cout << "Adding a new push packet to the database" << std::endl;
+            if(debug) std::cout << "Adding a new push packet to the database" << std::endl;
             
             for(int i = 0; i < packet->rxpk_buf.size(); i++) {
-                std::cout << "Adding a new push packet to the database" << std::endl;
+                if(debug) std::cout << "Adding a new push packet to the database" << std::endl;
 
                 try {
                     std::unique_ptr<sql::PreparedStatement> stmnt(conn->prepareStatement("INSERT INTO upPackets (gwui, time, tmms, tmst, freq, chan, rfch, stat, modu, datr, codr, rssi, lsnr, size, data, statId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));

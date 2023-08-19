@@ -38,26 +38,5 @@ CREATE TABLE `upPackets` (
   `rssi` int(11) DEFAULT NULL,
   `lsnr` float DEFAULT NULL,
   `size` int(11) DEFAULT NULL,
-  `data` text DEFAULT NULL,
-  `statId` int(11) DEFAULT NULL
+  `data` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-CREATE TABLE `statPackets` (
-  `id` int(11) PRIMARY KEY AUTO_INCREMENT,
-  `time` varchar(100) NOT NULL,
-  `lati` float NOT NULL,
-  `longi` float NOT NULL,
-  `alti` int(11) NOT NULL,
-  `rxnb` int(11) NOT NULL,
-  `rxok` int(11) NOT NULL,
-  `rxfw` int(11) NOT NULL,
-  `ackr` int(11) NOT NULL,
-  `dwnb` int(11) NOT NULL,
-  `txnb` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-ALTER TABLE `upPackets`
-  ADD KEY `statIdForeignKey` (`statId`);
-
-ALTER TABLE `upPackets`
-  ADD CONSTRAINT `statIdForeignKey` FOREIGN KEY (`statId`) REFERENCES `pushStats` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;

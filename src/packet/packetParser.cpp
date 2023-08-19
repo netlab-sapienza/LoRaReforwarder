@@ -206,65 +206,6 @@ namespace lorareforwarder::packet {
                 return;
             }
         }
-
-        /*if(!packjson["stat"].is_null()) {
-            std::cout << "stat: " << packjson["stat"] << std::endl;
-
-            packet->stat_buf = new stat;
-            if(!packet->stat_buf) common::handle_error("Can't allocate memory for stat instance");
-
-            packet->statCount++;
-
-            if(!packjson["stat"]["time"].is_null())
-                packet->stat_buf->time = packjson["stat"]["time"];
-            else
-                packet->stat_buf->time = "";
-
-            if(!packjson["stat"]["lati"].is_null())
-                packet->stat_buf->lati = packjson["stat"]["lati"];
-            else
-                packet->stat_buf->lati = sql::_NULL;
-
-            if(!packjson["stat"]["long"].is_null())
-                packet->stat_buf->longi = packjson["stat"]["long"];
-            else
-                packet->stat_buf->longi = sql::_NULL;
-
-            if(!packjson["stat"]["alti"].is_null())
-                packet->stat_buf->alti = packjson["stat"]["alti"];
-            else
-                packet->stat_buf->alti = sql::_NULL;
-
-            if(!packjson["stat"]["rxnb"].is_null())
-                packet->stat_buf->rxnb = packjson["stat"]["rxnb"];
-            else
-                packet->stat_buf->rxnb = sql::_NULL;
-
-            if(!packjson["stat"]["rxok"].is_null())
-                packet->stat_buf->rxok = packjson["stat"]["rxok"];
-            else
-                packet->stat_buf->rxok = sql::_NULL;
-
-            if(!packjson["stat"]["rxfw"].is_null())
-                packet->stat_buf->rxfw = packjson["stat"]["rxfw"];
-            else
-                packet->stat_buf->rxfw = sql::_NULL;
-
-            if(!packjson["stat"]["ackr"].is_null())
-                packet->stat_buf->ackr = packjson["stat"]["ackr"];
-            else
-                packet->stat_buf->ackr = sql::_NULL;
-
-            if(!packjson["stat"]["dwnb"].is_null())
-                packet->stat_buf->dwnb = packjson["stat"]["dwnb"];
-            else
-                packet->stat_buf->dwnb = sql::_NULL;
-
-            if(!packjson["stat"]["txnb"].is_null())
-                packet->stat_buf->txnb = packjson["stat"]["txnb"];
-            else
-                packet->stat_buf->txnb = sql::_NULL;
-        }*/
     }
 
     void LoRaPacketParser::parsePullJson(const char *string, LoRaPacket* packet) {

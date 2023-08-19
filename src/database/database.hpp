@@ -9,7 +9,7 @@ namespace lorareforwarder::database {
     class Database {
         public:
             explicit Database(const std::string &host_name, const std::string &user_name, const std::string &password,
-                              const std::string &schema, uint32_t port);
+                              const std::string &schema, uint32_t port, bool _debug);
             ~Database();
 
             bool isConnected() { return connected; }
@@ -28,6 +28,7 @@ namespace lorareforwarder::database {
         private:
             std::unique_ptr<sql::Connection> conn;
             bool connected = false;
+            bool debug;
     };
 }
 

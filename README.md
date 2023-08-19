@@ -1,9 +1,13 @@
 # LoRaReforwarder - WIP
 LoRaWan UDP Semtech protocol forwarder
 
-Receives packets from a LoRa gateway, store received payloads in a local SQL database and forward them to the specified network server
+Receives packets from a LoRa gateway, stores received payloads in a local SQL database and forwards them to the specified network server
 
 ## Software execution
+
+Requirements:
+- MariaDB SQL Database
+- Network Server
 
 Software requirements:
 - Minimum CMake VERSION 3.20.0
@@ -22,6 +26,7 @@ Run the project when inside the build folder:
 ```sh
 ./loraReforwarder
 ```
+Rembember to move the .env file on the same folder of the built executable!
 
 
 **Building and running software using Docker**
