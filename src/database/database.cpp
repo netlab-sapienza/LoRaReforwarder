@@ -47,7 +47,7 @@ namespace lorareforwarder::database {
                 if(debug) std::cout << "Adding a new push packet to the database" << std::endl;
 
                 try {
-                    std::unique_ptr<sql::PreparedStatement> stmnt(conn->prepareStatement("INSERT INTO upPackets (gwui, time, tmms, tmst, freq, chan, rfch, stat, modu, datr, codr, rssi, lsnr, size, data, statId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
+                    std::unique_ptr<sql::PreparedStatement> stmnt(conn->prepareStatement("INSERT INTO upPackets (gwui, time, tmms, tmst, freq, chan, rfch, stat, modu, datr, codr, rssi, lsnr, size, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
 
                     stmnt->setString(1, macStr);
                     stmnt->setString(2, packet->rxpk_buf[i].time.c_str());
@@ -65,7 +65,7 @@ namespace lorareforwarder::database {
                     stmnt->setUInt(14, packet->rxpk_buf[i].size);
                     stmnt->setString(15, packet->rxpk_buf[i].data.c_str());
                     
-                    stmnt->setNull(16, sql::_NULL);
+                    //stmnt->setNull(16, sql::_NULL);
 
                     res = stmnt->executeUpdate();
                 } catch(sql::SQLException& e){
