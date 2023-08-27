@@ -13,10 +13,10 @@ services:
       MYSQL_ROOT_PASSWORD: 2BAS3PaZQ6BBySwv
     networks:
       database_network:
-        ipv4_address: 172.18.0.2
+        ipv4_address: 192.168.135.2
 
   phpmyadmin:
-    image: arm64v8/phpmyadmin:latest
+    image: phpmyadmin:latest
     restart: always
     ports:
       - 8089:80
@@ -24,7 +24,7 @@ services:
       - PMA_HOST=mariadb
     networks:
       database_network:
-        ipv4_address: 172.18.0.4
+        ipv4_address: 192.168.135.4
     depends_on:
       - mariadb
     
@@ -33,7 +33,7 @@ services:
       - '1700:1700/udp'
     networks:
       database_network:
-        ipv4_address: 172.18.0.3
+        ipv4_address: 192.168.135.3
     restart: always
     depends_on:
       - mariadb
@@ -47,5 +47,5 @@ networks:
     driver: bridge
     ipam:
      config:
-       - subnet: 172.18.0.0/24
-         gateway: 172.18.0.1
+       - subnet: 192.168.135.0/24
+         gateway: 192.168.135.1

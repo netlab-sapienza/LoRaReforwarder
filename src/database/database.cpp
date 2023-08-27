@@ -11,7 +11,9 @@ namespace lorareforwarder::database {
             sql::Driver* driver = sql::mariadb::get_driver_instance();
 
             sql::SQLString url("jdbc:mariadb://" + host_name + ":" + std::to_string(port) + "/" + schema);
-            sql::Properties properties({{"user", user_name}, {"password", password}});
+            std::cout << "URL: " << url << std::endl;
+            sql::Properties properties({{"user", user_name}, {"password", password}, {"autoReconnect", "true"}});
+            std::cout << "Dati: " << user_name << " " << password << std::endl;
 
             conn = Database::generateConnection(driver, url, properties);
 

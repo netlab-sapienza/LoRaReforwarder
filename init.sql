@@ -1,5 +1,5 @@
 CREATE DATABASE IF NOT EXISTS lorareforwarder;
-GRANT ALL PRIVILEGES ON lorareforwarder.* TO 'lorareforwarder'@'172.18.0.3' identified by 'lorareforwarderpwd';
+GRANT ALL PRIVILEGES ON lorareforwarder.* TO 'lorareforwarder'@'192.168.135.3' identified by 'lorareforwarderpwd';
 FLUSH PRIVILEGES;
 USE lorareforwarder;
 

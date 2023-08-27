@@ -26,7 +26,7 @@ Run the project when inside the build folder:
 ```sh
 ./loraReforwarder
 ```
-Rembember to move the .env file on the same folder of the built executable!
+Rembember to move the .env file to the same folder of the built executable!
 
 
 **Building and running software using Docker**
