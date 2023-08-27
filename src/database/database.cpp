@@ -47,26 +47,83 @@ namespace lorareforwarder::database {
                 if(debug) std::cout << "Adding a new push packet to the database" << std::endl;
 
                 try {
-                    std::unique_ptr<sql::PreparedStatement> stmnt(conn->prepareStatement("INSERT INTO upPackets (gwui, time, tmms, tmst, freq, chan, rfch, stat, modu, datr, codr, rssi, lsnr, size, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
+                    std::unique_ptr<sql::PreparedStatement> stmnt(conn->prepareStatement("INSERT INTO upPackets (gwui, time, tmms, tmst, freq, chan, rfch, stat, modu, datr, codr, rssi, lsnr, size, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
 
-                    stmnt->setString(1, macStr);
-                    stmnt->setString(2, packet->rxpk_buf[i].time.c_str());
-                    stmnt->setUInt64(3, packet->rxpk_buf[i].tmms);
-                    stmnt->setUInt(4, packet->rxpk_buf[i].tmst);
-                    stmnt->setFloat(5, packet->rxpk_buf[i].freq);
-                    stmnt->setUInt(6, packet->rxpk_buf[i].chan);
-                    stmnt->setUInt(7, packet->rxpk_buf[i].rfch);
-                    stmnt->setShort(8, packet->rxpk_buf[i].stat);
-                    stmnt->setString(9, packet->rxpk_buf[i].modu.c_str());
-                    stmnt->setString(10, packet->rxpk_buf[i].datr.c_str());
-                    stmnt->setString(11, packet->rxpk_buf[i].codr.c_str());
-                    stmnt->setInt(12, packet->rxpk_buf[i].rssi);
-                    stmnt->setFloat(13, packet->rxpk_buf[i].lsnr);
-                    stmnt->setUInt(14, packet->rxpk_buf[i].size);
-                    stmnt->setString(15, packet->rxpk_buf[i].data.c_str());
+                    if(macStr == "")
+                        stmnt->setNull(1, sql::_NULL);
+                    else
+                        stmnt->setString(1, macStr);
+
+                    if(packet->rxpk_buf[i].time == "")
+                        stmnt->setNull(2, sql::_NULL);
+                    else                    
+                        stmnt->setString(2, packet->rxpk_buf[i].time.c_str());
+
+                    if(packet->rxpk_buf[i].tmms == std::numeric_limits<uint64_t>::max())
+                        stmnt->setNull(3, sql::_NULL);
+                    else                    
+                        stmnt->setUInt64(3, packet->rxpk_buf[i].tmms);
+
+                    if(packet->rxpk_buf[i].tmst == std::numeric_limits<uint32_t>::max())
+                        stmnt->setNull(4, sql::_NULL);
+                    else                    
+                        stmnt->setUInt(4, packet->rxpk_buf[i].tmst);
+
+                    if(packet->rxpk_buf[i].freq == std::numeric_limits<float>::max())
+                        stmnt->setNull(5, sql::_NULL);
+                    else                    
+                        stmnt->setFloat(5, packet->rxpk_buf[i].freq);
+
+                    if(packet->rxpk_buf[i].chan == std::numeric_limits<uint32_t>::max())
+                        stmnt->setNull(6, sql::_NULL);
+                    else                    
+                        stmnt->setUInt(6, packet->rxpk_buf[i].chan);
                     
-                    //stmnt->setNull(16, sql::_NULL);
+                    if(packet->rxpk_buf[i].rfch == std::numeric_limits<uint32_t>::max())
+                        stmnt->setNull(7, sql::_NULL);
+                    else                     
+                        stmnt->setUInt(7, packet->rxpk_buf[i].rfch);
 
+                    if(packet->rxpk_buf[i].stat == std::numeric_limits<uint32_t>::max())
+                        stmnt->setNull(8, sql::_NULL);
+                    else
+                        stmnt->setShort(8, packet->rxpk_buf[i].stat);
+                    
+                    if(packet->rxpk_buf[i].modu == "")
+                        stmnt->setNull(9, sql::_NULL);
+                    else
+                        stmnt->setString(9, packet->rxpk_buf[i].modu.c_str());
+
+                    if(packet->rxpk_buf[i].datr == "")
+                        stmnt->setNull(10, sql::_NULL);
+                    else                    
+                        stmnt->setString(10, packet->rxpk_buf[i].datr.c_str());
+                
+                    if(packet->rxpk_buf[i].codr == "")
+                        stmnt->setNull(11, sql::_NULL);
+                    else    
+                        stmnt->setString(11, packet->rxpk_buf[i].codr.c_str());
+
+                    if(packet->rxpk_buf[i].rssi == std::numeric_limits<int32_t>::max())
+                        stmnt->setNull(12, sql::_NULL);
+                    else                    
+                        stmnt->setInt(12, packet->rxpk_buf[i].rssi);
+
+                    if(packet->rxpk_buf[i].lsnr == std::numeric_limits<float>::max())
+                        stmnt->setNull(13, sql::_NULL);
+                    else                    
+                        stmnt->setFloat(13, packet->rxpk_buf[i].lsnr);
+
+                    if(packet->rxpk_buf[i].size == std::numeric_limits<uint32_t>::max())
+                        stmnt->setNull(14, sql::_NULL);
+                    else                    
+                        stmnt->setUInt(14, packet->rxpk_buf[i].size);
+
+                    if(packet->rxpk_buf[i].data == "")
+                        stmnt->setNull(15, sql::_NULL);
+                    else                    
+                        stmnt->setString(15, packet->rxpk_buf[i].data.c_str());
+                    
                     res = stmnt->executeUpdate();
                 } catch(sql::SQLException& e){
                     std::cerr << "Error inserting new push packet: " << e.what() << std::endl;
@@ -89,19 +146,68 @@ namespace lorareforwarder::database {
                 std::unique_ptr<sql::PreparedStatement> stmnt(conn->prepareStatement("INSERT INTO downPackets (imme, tmst, tmms, freq, rfch, powe, modu, datr, codr, fdev, ipol, prea, size, data, ncrc) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
 
                 stmnt->setBoolean(1, packet->txpk_buf->imme);
-                stmnt->setUInt64(2, packet->txpk_buf->tmst);
-                stmnt->setUInt64(3, packet->txpk_buf->tmms);
-                stmnt->setFloat(4, packet->txpk_buf->freq);
-                stmnt->setUInt(5, packet->txpk_buf->rfch);
-                stmnt->setUInt(6, packet->txpk_buf->powe);
-                stmnt->setString(7, packet->txpk_buf->modu.c_str());
-                stmnt->setString(8, packet->txpk_buf->datr.c_str());
-                stmnt->setString(9, packet->txpk_buf->codr.c_str());
-                stmnt->setUInt(10, packet->txpk_buf->fdev);
+                if(packet->txpk_buf->tmst == std::numeric_limits<uint64_t>::max())
+                    stmnt->setNull(2, sql::_NULL);
+                else
+                    stmnt->setUInt64(2, packet->txpk_buf->tmst);
+
+                if(packet->txpk_buf->tmms == std::numeric_limits<uint64_t>::max())
+                    stmnt->setNull(3, sql::_NULL);
+                else                
+                    stmnt->setUInt64(3, packet->txpk_buf->tmms);
+
+                if(packet->txpk_buf->freq == std::numeric_limits<float>::max())
+                    stmnt->setNull(4, sql::_NULL);
+                else                
+                    stmnt->setFloat(4, packet->txpk_buf->freq);
+
+                if(packet->txpk_buf->rfch == std::numeric_limits<uint32_t>::max())
+                    stmnt->setNull(5, sql::_NULL);
+                else
+                    stmnt->setUInt(5, packet->txpk_buf->rfch);
+
+                if(packet->txpk_buf->powe == std::numeric_limits<uint32_t>::max())
+                    stmnt->setNull(6, sql::_NULL);
+                else                
+                    stmnt->setUInt(6, packet->txpk_buf->powe);
+
+                if(packet->txpk_buf->modu == "")
+                    stmnt->setNull(7, sql::_NULL);
+                else
+                    stmnt->setString(7, packet->txpk_buf->modu.c_str());
+
+                if(packet->txpk_buf->datr == "")
+                    stmnt->setNull(8, sql::_NULL);
+                else
+                    stmnt->setString(8, packet->txpk_buf->datr.c_str());
+                
+                if(packet->txpk_buf->codr == "")
+                    stmnt->setNull(9, sql::_NULL);
+                else
+                    stmnt->setString(9, packet->txpk_buf->codr.c_str());
+
+                if(packet->txpk_buf->fdev == std::numeric_limits<uint32_t>::max())
+                    stmnt->setNull(10, sql::_NULL);
+                else 
+                    stmnt->setUInt(10, packet->txpk_buf->fdev);
+
                 stmnt->setBoolean(11, packet->txpk_buf->ipol);
-                stmnt->setUInt(12, packet->txpk_buf->prea);
-                stmnt->setUInt(13, packet->txpk_buf->size);
-                stmnt->setString(14, packet->txpk_buf->data.c_str());
+                
+                if(packet->txpk_buf->prea == std::numeric_limits<uint32_t>::max())
+                    stmnt->setNull(12, sql::_NULL);
+                else
+                    stmnt->setUInt(12, packet->txpk_buf->prea);
+
+                if(packet->txpk_buf->size == std::numeric_limits<uint32_t>::max())
+                    stmnt->setNull(13, sql::_NULL);
+                else               
+                    stmnt->setUInt(13, packet->txpk_buf->size);
+
+                if(packet->txpk_buf->data == "")
+                    stmnt->setNull(14, sql::_NULL);
+                else                
+                    stmnt->setString(14, packet->txpk_buf->data.c_str());
+                
                 stmnt->setBoolean(15, packet->txpk_buf->ncrc);
                 
                 stmnt->executeUpdate();

@@ -129,37 +129,37 @@ namespace lorareforwarder::packet {
                     if(!packjson["rxpk"][i]["tmms"].is_null())
                         packet->rxpk_buf[i].tmms = packjson["rxpk"][i]["tmms"];
                     else
-                        packet->rxpk_buf[i].tmms = sql::_NULL;
+                        packet->rxpk_buf[i].tmms = std::numeric_limits<uint64_t>::max();
 
                     if(!packjson["rxpk"][i]["tmst"].is_null())
                         packet->rxpk_buf[i].tmst = packjson["rxpk"][i]["tmst"];
                     else
-                        packet->rxpk_buf[i].tmst = sql::_NULL;
+                        packet->rxpk_buf[i].tmst = std::numeric_limits<uint32_t>::max();
 
                     if(!packjson["rxpk"][i]["chan"].is_null())
                         packet->rxpk_buf[i].chan = packjson["rxpk"][i]["chan"];
                     else
-                        packet->rxpk_buf[i].chan = sql::_NULL;
+                        packet->rxpk_buf[i].chan = std::numeric_limits<uint32_t>::max();
 
                     if(!packjson["rxpk"][i]["rfch"].is_null())
                         packet->rxpk_buf[i].rfch = packjson["rxpk"][i]["rfch"];
                     else
-                        packet->rxpk_buf[i].rfch = sql::_NULL;
+                        packet->rxpk_buf[i].rfch = std::numeric_limits<uint32_t>::max();
 
                     if(!packjson["rxpk"][i]["stat"].is_null())
                         packet->rxpk_buf[i].stat = packjson["rxpk"][i]["stat"];
                     else
-                        packet->rxpk_buf[i].stat = sql::_NULL;
+                        packet->rxpk_buf[i].stat = std::numeric_limits<uint32_t>::max();
 
                     if(!packjson["rxpk"][i]["freq"].is_null())
                         packet->rxpk_buf[i].freq = packjson["rxpk"][i]["freq"];
                     else
-                        packet->rxpk_buf[i].freq = sql::_NULL;
+                        packet->rxpk_buf[i].freq = std::numeric_limits<float>::max();
 
                     if(!packjson["rxpk"][i]["rssi"].is_null())
                         packet->rxpk_buf[i].rssi = packjson["rxpk"][i]["rssi"];
                     else
-                        packet->rxpk_buf[i].rssi = sql::_NULL;
+                        packet->rxpk_buf[i].rssi = std::numeric_limits<int32_t>::max();
 
                     if(!packjson["rxpk"][i]["datr"].is_null()) {
                         std::string datr = packjson["rxpk"][i]["datr"];
@@ -168,7 +168,7 @@ namespace lorareforwarder::packet {
                     else
                         packet->rxpk_buf[i].datr = "";
 
-                    if(!packjson["rxpk"][i]["modu"].is_null()) { // TODO DB check
+                    if(!packjson["rxpk"][i]["modu"].is_null()) {
                         std::string modu = packjson["rxpk"][i]["modu"];
                         packet->rxpk_buf[i].modu = modu;
                     }
@@ -185,12 +185,12 @@ namespace lorareforwarder::packet {
                     if(!packjson["rxpk"][i]["lsnr"].is_null())
                         packet->rxpk_buf[i].lsnr = packjson["rxpk"][i]["lsnr"];
                     else
-                        packet->rxpk_buf[i].lsnr = sql::_NULL;
+                        packet->rxpk_buf[i].lsnr = std::numeric_limits<float>::max();
 
                     if(!packjson["rxpk"][i]["size"].is_null())
                         packet->rxpk_buf[i].size = packjson["rxpk"][i]["size"];
                     else
-                        packet->rxpk_buf[i].size = sql::_NULL;
+                        packet->rxpk_buf[i].size = std::numeric_limits<uint32_t>::max();
 
                     if(!packjson["rxpk"][i]["data"].is_null()) {
                         std::string data = packjson["rxpk"][i]["data"];
@@ -223,27 +223,27 @@ namespace lorareforwarder::packet {
                 packet->txpk_buf->imme = packjson["txpk"]["imme"];
 
             if(packjson["txpk"]["tmst"].is_null())
-                packet->txpk_buf->tmst = sql::_NULL;
+                packet->txpk_buf->tmst = std::numeric_limits<uint64_t>::max();
             else
                 packet->txpk_buf->tmst = packjson["txpk"]["tmst"];
 
             if(packjson["txpk"]["tmms"].is_null())
-                packet->txpk_buf->tmms = sql::_NULL;
+                packet->txpk_buf->tmms = std::numeric_limits<uint64_t>::max();
             else
                 packet->txpk_buf->tmms = packjson["txpk"]["tmms"];
 
             if(packjson["txpk"]["freq"].is_null())
-                packet->txpk_buf->freq = sql::_NULL;
+                packet->txpk_buf->freq = std::numeric_limits<float>::max();
             else
                 packet->txpk_buf->freq = packjson["txpk"]["freq"];
 
             if(packjson["txpk"]["rfch"].is_null())
-                packet->txpk_buf->rfch = sql::_NULL;
+                packet->txpk_buf->rfch = std::numeric_limits<uint32_t>::max();
             else
                 packet->txpk_buf->rfch = packjson["txpk"]["rfch"];
 
             if(packjson["txpk"]["powe"].is_null())
-                packet->txpk_buf->powe = sql::_NULL;
+                packet->txpk_buf->powe = std::numeric_limits<uint32_t>::max();
             else
                 packet->txpk_buf->powe = packjson["txpk"]["powe"];
 
@@ -263,27 +263,27 @@ namespace lorareforwarder::packet {
                 packet->txpk_buf->codr = packjson["txpk"]["codr"];
             
             if(packjson["txpk"]["fdev"].is_null())
-                packet->txpk_buf->fdev = sql::_NULL;
+                packet->txpk_buf->fdev = std::numeric_limits<uint32_t>::max();
             else
                 packet->txpk_buf->fdev = packjson["txpk"]["fdev"];
 
             if(packjson["txpk"]["ipol"].is_null())
-                packet->txpk_buf->ipol = sql::_NULL;
+                packet->txpk_buf->ipol = false;
             else
                 packet->txpk_buf->ipol = packjson["txpk"]["ipol"];
 
             if(packjson["txpk"]["prea"].is_null())
-                packet->txpk_buf->prea = sql::_NULL;
+                packet->txpk_buf->prea = std::numeric_limits<uint32_t>::max();
             else
                 packet->txpk_buf->prea = packjson["txpk"]["prea"];
 
             if(packjson["txpk"]["size"].is_null())
-                packet->txpk_buf->size = sql::_NULL;
+                packet->txpk_buf->size = std::numeric_limits<uint32_t>::max();
             else
                 packet->txpk_buf->size = packjson["txpk"]["size"];
 
             if(packjson["txpk"]["data"].is_null())
-                packet->txpk_buf->data = sql::_NULL;
+                packet->txpk_buf->data = "";
             else
                 packet->txpk_buf->data = packjson["txpk"]["data"];
 
