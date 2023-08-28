@@ -6,6 +6,9 @@
 #include <cerrno>
 #include <cstring>
 
+#include <thread>
+#include <chrono>
+
 #include "packet/packetParser.hpp"
 #include "socket/server.hpp"
 #include "server.hpp"
@@ -52,10 +55,8 @@ namespace lorareforwarder::server {
             common::handle_error_en(errorCode, errorMessage);
         });
 
-        std::string input;
-        std::getline(std::cin, input);
-        while (input != "exit") {
-            std::getline(std::cin, input);
+        while(1) {
+            std::this_thread::sleep_for(std::chrono::seconds(1));
         }
     }
 }
