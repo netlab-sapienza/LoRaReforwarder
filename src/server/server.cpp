@@ -31,7 +31,7 @@ namespace lorareforwarder::server {
             socket.SendTo(message, length, netserver_host, netserver_port);
 
             if(packet::LoRaPacketParser::getPacketType(message[3]) == "PKT_PUSH_DATA") {
-                packet::LoRaPacket* pushpacket = packet::LoRaPacketParser::parse(message, length);
+                packet::LoRaPacket* pushpacket = packet::LoRaPacketParser::parse(message, length, debug);
                 std::async(std::launch::async, [&]() {
                     database::Database::insertPushDataPacketStatic(database, pushpacket);
                 });
@@ -42,7 +42,7 @@ namespace lorareforwarder::server {
                 udpServer.SendTo(servermessage, serverlength, ipv4, port);
 
                 if(packet::LoRaPacketParser::getPacketType(servermessage[3]) == "PKT_PULL_RESP") {
-                    packet::LoRaPacket* pullpacket = packet::LoRaPacketParser::parse(servermessage, serverlength);
+                    packet::LoRaPacket* pullpacket = packet::LoRaPacketParser::parse(servermessage, serverlength, debug);
                     std::async(std::launch::async, [&]() {
                         database::Database::insertPullDataPacketStatic(database, pullpacket);
                     });
@@ -56,7 +56,7 @@ namespace lorareforwarder::server {
         });
 
         while(1) {
-            std::this_thread::sleep_for(std::chrono::seconds(1));
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
     }
 }

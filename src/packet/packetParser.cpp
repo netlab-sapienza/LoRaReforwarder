@@ -41,7 +41,7 @@ namespace lorareforwarder::packet {
         return type;
     }
 
-    LoRaPacket* LoRaPacketParser::parse(const uint8_t *packet_buf, size_t length) {
+    LoRaPacket* LoRaPacketParser::parse(const uint8_t *packet_buf, size_t length, bool debug) {
         LoRaPacket *packet = new LoRaPacket;
         if(!packet) common::handle_error("Can't allocate memory for LoRaPacket instance");
 
@@ -67,12 +67,11 @@ namespace lorareforwarder::packet {
         switch(packet_buf[3]) {
             case PKT_PUSH_DATA: {
                 packet->type = PKT_PUSH_DATA;
-                printf("PUSH_DATA from gateway 0x%08X%08X\n", (uint32_t)(packet->gw_mac >> 32), (uint32_t)(packet->gw_mac & 0xFFFFFFFF));
+                if(debug) printf("PUSH_DATA from gateway 0x%08X%08X\n", (uint32_t)(packet->gw_mac >> 32), (uint32_t)(packet->gw_mac & 0xFFFFFFFF));
                 packet->ack_command = PKT_PUSH_ACK;
 
                 char* string = (char*) (packet_buf + 12);
-                printf("La stringa che contiene e' %s\n", string);
-                parsePushJson(string, packet);
+                parsePushJson(string, packet, debug);
                 break;
             }
             case PKT_PUSH_ACK: {
@@ -82,7 +81,7 @@ namespace lorareforwarder::packet {
             case PKT_PULL_DATA: {
                 packet->type = PKT_PULL_DATA;
 
-                printf("PULL_DATA from gateway 0x%08X%08X\n", (uint32_t)(packet->gw_mac >> 32), (uint32_t)(packet->gw_mac & 0xFFFFFFFF));
+                if(debug) printf("PULL_DATA from gateway 0x%08X%08X\n", (uint32_t)(packet->gw_mac >> 32), (uint32_t)(packet->gw_mac & 0xFFFFFFFF));
                 packet->ack_command = PKT_PULL_ACK;
                 break;
             }
@@ -90,7 +89,7 @@ namespace lorareforwarder::packet {
                 packet->type = PKT_PULL_RESP;
 
                 char* string = (char*) (packet_buf + 4);
-                parsePullJson(string, packet);
+                parsePullJson(string, packet, debug);
                 break;
             }
             case PKT_PULL_ACK: {
@@ -102,7 +101,7 @@ namespace lorareforwarder::packet {
                 break;
             }
             default: {
-                printf("Invalid packet %u\n", packet_buf[3]);
+                if(debug) printf("Invalid packet %u\n", packet_buf[3]);
                 packet->isValid = false;
             }
         };  
@@ -110,7 +109,7 @@ namespace lorareforwarder::packet {
         return packet;
     }
 
-    void LoRaPacketParser::parsePushJson(const char *string, LoRaPacket* packet) {
+    void LoRaPacketParser::parsePushJson(const char *string, LoRaPacket* packet, bool debug) {
         json packjson = json::parse(string);
 
         if(!packjson["rxpk"].is_null() && packjson["rxpk"].is_array()) {
@@ -209,11 +208,11 @@ namespace lorareforwarder::packet {
         }
     }
 
-    void LoRaPacketParser::parsePullJson(const char *string, LoRaPacket* packet) {
+    void LoRaPacketParser::parsePullJson(const char *string, LoRaPacket* packet, bool debug) {
         json packjson = json::parse(string);
 
         if(!packjson["txpk"].is_null()) {
-            std::cout << "txpk: " << packjson["txpk"] << std::endl;
+            if(debug) std::cout << "txpk: " << packjson["txpk"] << std::endl;
 
             packet->txpk_buf = new txpk;
             if(!packet->txpk_buf) common::handle_error("Can't allocate memory for txpk instance");
