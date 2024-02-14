@@ -27,7 +27,7 @@ CREATE TABLE `upPackets` (
   `gwui` varchar(18) DEFAULT NULL,
   `time` varchar(100) DEFAULT NULL,
   `tmms` bigint(20) DEFAULT NULL,
-  `tmst` int(11) DEFAULT NULL,
+  `tmst` bigint(20) DEFAULT NULL,
   `freq` int(11) DEFAULT NULL,
   `chan` int(11) DEFAULT NULL,
   `rfch` int(11) DEFAULT NULL,

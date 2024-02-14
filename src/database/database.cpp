@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstring>
 #include <limits>
+#include <ctime>
 
 #include "database.hpp"
 
@@ -65,10 +66,7 @@ namespace lorareforwarder::database {
                     else                    
                         stmnt->setUInt64(3, packet->rxpk_buf[i].tmms);
 
-                    if(packet->rxpk_buf[i].tmst == std::numeric_limits<uint32_t>::max())
-                        stmnt->setNull(4, sql::_NULL);
-                    else                    
-                        stmnt->setUInt(4, packet->rxpk_buf[i].tmst);
+                    stmnt->setUInt64(4, std::time(nullptr));
 
                     if(packet->rxpk_buf[i].freq == std::numeric_limits<float>::max())
                         stmnt->setNull(5, sql::_NULL);
@@ -147,10 +145,7 @@ namespace lorareforwarder::database {
                 std::unique_ptr<sql::PreparedStatement> stmnt(conn->prepareStatement("INSERT INTO downPackets (imme, tmst, tmms, freq, rfch, powe, modu, datr, codr, fdev, ipol, prea, size, data, ncrc) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
 
                 stmnt->setBoolean(1, packet->txpk_buf->imme);
-                if(packet->txpk_buf->tmst == std::numeric_limits<uint64_t>::max())
-                    stmnt->setNull(2, sql::_NULL);
-                else
-                    stmnt->setUInt64(2, packet->txpk_buf->tmst);
+                stmnt->setUInt64(2, std::time(nullptr));
 
                 if(packet->txpk_buf->tmms == std::numeric_limits<uint64_t>::max())
                     stmnt->setNull(3, sql::_NULL);
