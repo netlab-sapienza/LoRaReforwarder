@@ -28,7 +28,7 @@ CREATE TABLE `upPackets` (
   `time` varchar(100) DEFAULT NULL,
   `tmms` bigint(20) DEFAULT NULL,
   `tmst` bigint(20) DEFAULT NULL,
-  `freq` int(11) DEFAULT NULL,
+  `freq` float DEFAULT NULL,
   `chan` int(11) DEFAULT NULL,
   `rfch` int(11) DEFAULT NULL,
   `stat` tinyint(4) DEFAULT NULL,

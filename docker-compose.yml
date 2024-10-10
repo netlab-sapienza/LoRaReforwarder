@@ -35,6 +35,8 @@ services:
       database_network:
         ipv4_address: 192.168.135.3
     restart: always
+    volumes:
+      - /opt/lorareforwarderBackups:/lorareforwarder/backups
     depends_on:
       - mariadb
     image: 'netlab-sapienza/lorareforwarder:latest'
