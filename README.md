@@ -1,4 +1,4 @@
-# LoRaReforwarder - WIP
+# LoRaReforwarder
 LoRaWan UDP Semtech protocol forwarder
 
 Receives packets from a LoRa gateway, stores received payloads in a local SQL database and forwards them to the specified network server

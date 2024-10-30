@@ -29,7 +29,7 @@ RUN cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCONC_WITH_UNIT_TESTS=Off -DCMAK
     cmake --build . --config RelWithDebInfo --parallel 8 && \
     make install
 
-ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/lib/mariadb"
+ENV LD_LIBRARY_PATH="/usr/local/lib/mariadb"
 
 WORKDIR /lorareforwarder/build
 COPY ../.env .
