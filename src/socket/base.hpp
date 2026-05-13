@@ -6,29 +6,33 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <netdb.h>
-#include <cstring>
 #include <functional>
 #include <cerrno>
-#include <cstdlib>
+#include <string>
 
-#include "common/common.hpp"
 
 class BaseSocket {
     public:
         const uint16_t BUFFER_SIZE = 0xFFFF;
         sockaddr_in address;
         bool isClosed = false;
-        #define FDR_UNUSED(expr){ (void)(expr); } 
+        #define FDR_UNUSED(expr){ (void)(expr); }
         #define FDR_ON_ERROR std::function<void(int, std::string)> onError = [](int errorCode, std::string errorMessage){FDR_UNUSED(errorCode); FDR_UNUSED(errorMessage)}
 
     protected:
         int sock = 0;
+        bool shouldShutdown = false;
+
+    public:
+        void setShouldShutdown(bool val) { shouldShutdown = val; }
+        bool getShouldShutdown() const { return shouldShutdown; }
+
         static std::string ipToString(sockaddr_in addr) {
             char ip[INET_ADDRSTRLEN];
             inet_ntop(AF_INET, &(addr.sin_addr), ip, INET_ADDRSTRLEN);
 
             return std::string(ip);
-        }  
+        }
 
         BaseSocket(FDR_ON_ERROR, int socketId = -1) {
             if (socketId < 0) {
@@ -41,6 +45,10 @@ class BaseSocket {
         }
 
     public:
+        virtual ~BaseSocket() {
+            socketClose();
+        }
+
         virtual void socketClose() {
             if(isClosed) return;
             isClosed = true;
@@ -54,7 +62,7 @@ class BaseSocket {
         int getRemotePort() {
             return ntohs(this->address.sin_port);
         }
-        
+
         int getFileDescriptor() const {
             return this->sock;
         }

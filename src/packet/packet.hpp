@@ -10,9 +10,11 @@
 #define PKT_PULL_ACK     4
 #define PKT_TX_ACK       5
 
+#include <string>
+#include <cstdint>
 #include <cstdlib>
 #include <vector>
-#include <mariadb/conncpp/Types.hpp>
+#include <memory>
 
 namespace lorareforwarder::packet {
     struct txpk {
@@ -79,10 +81,10 @@ namespace lorareforwarder::packet {
             uint8_t ack_command;
 
             std::vector<rxpk> rxpk_buf;
-            stat* stat_buf;
+            std::unique_ptr<stat> stat_buf;
             uint16_t statCount = 0;
 
-            txpk* txpk_buf;
+            std::unique_ptr<txpk> txpk_buf;
 
             bool isValid = true;
     };

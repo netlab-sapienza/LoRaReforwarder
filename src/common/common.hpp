@@ -1,7 +1,7 @@
 #ifndef LORAREFORWARDER_COMMON_HPP
 #define LORAREFORWARDER_COMMON_HPP
 
-#include <iostream>
+#include <string>
 #include <cstring>
 #include <netdb.h>
 #include <arpa/inet.h>

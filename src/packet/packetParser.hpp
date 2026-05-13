@@ -3,6 +3,7 @@
 
 #include "packet.hpp"
 #include <string>
+#include <memory>
 
 namespace lorareforwarder::packet {
     class LoRaPacketParser {
@@ -10,12 +11,12 @@ namespace lorareforwarder::packet {
             explicit LoRaPacketParser() = default;
             ~LoRaPacketParser() = default;
 
-            static LoRaPacket* parse(const uint8_t *packet_buf, size_t length, bool debug = false);
+            static std::unique_ptr<LoRaPacket> parse(const uint8_t *packet_buf, size_t length, bool debug = false);
             static std::string getPacketType(const uint8_t buf);
 
         private:
-            static void parsePushJson(const char *string, LoRaPacket* packet, bool debug = false);
-            static void parsePullJson(const char *string, LoRaPacket* packet, bool debug = false);
+            static void parsePushJson(const char *string, LoRaPacket& packet, bool debug = false);
+            static void parsePullJson(const char *string, LoRaPacket& packet, bool debug = false);
 
     };
 }

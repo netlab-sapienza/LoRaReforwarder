@@ -13,9 +13,9 @@ namespace lorareforwarder::database {
             sql::Driver* driver = sql::mariadb::get_driver_instance();
 
             sql::SQLString url("jdbc:mariadb://" + host_name + ":" + std::to_string(port) + "/" + schema);
-            std::cout << "URL: " << url << std::endl;
+            // std::cout << "URL: " << url << std::endl;
             sql::Properties properties({{"user", user_name}, {"password", password}, {"autoReconnect", "true"}});
-            std::cout << "Dati: " << user_name << " " << password << std::endl;
+            // std::cout << "Dati: " << user_name << " " << password << std::endl;
 
             conn = Database::generateConnection(driver, url, properties);
 
@@ -34,7 +34,9 @@ namespace lorareforwarder::database {
 
     Database::~Database() = default;
 
-    void Database::insertPushDataPacket(packet::LoRaPacket* packet) {
+    void Database::insertPushDataPacket(std::unique_ptr<packet::LoRaPacket> packet) {
+        std::lock_guard<std::mutex> lock(dbMutex_);
+
         char macStr[18];
         snprintf(macStr, sizeof(macStr), "%08X%08X", (uint32_t)(packet->gw_mac >> 32), (uint32_t)(packet->gw_mac & 0xFFFFFFFF));
         std::string str(macStr);
@@ -43,10 +45,10 @@ namespace lorareforwarder::database {
         int32_t res;
 
         if(packet->rxpk_buf.size() > 0) {
-            if(debug) std::cout << "Adding a new push packet to the database" << std::endl;
+            // if(debug) std::cout << "Adding a new push packet to the database" << std::endl;
             
             for(int i = 0; i < packet->rxpk_buf.size(); i++) {
-                if(debug) std::cout << "Adding a new push packet to the database" << std::endl;
+                // if(debug) std::cout << "Adding a new push packet to the database" << std::endl;
 
                 try {
                     std::unique_ptr<sql::PreparedStatement> stmnt(conn->prepareStatement("INSERT INTO upPackets (gwui, time, tmms, tmst, freq, chan, rfch, stat, modu, datr, codr, rssi, lsnr, size, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
@@ -129,17 +131,16 @@ namespace lorareforwarder::database {
                 }
             }
 
-            delete packet;
             return;
         }
-
-        delete packet;
         return;
     }
 
-    void Database::insertPullDataPacket(packet::LoRaPacket* packet) {
+    void Database::insertPullDataPacket(std::unique_ptr<packet::LoRaPacket> packet) {
+        std::lock_guard<std::mutex> lock(dbMutex_);
+
         if(packet->txpk_buf) {
-            std::cout << "Adding a new pull packet to the database" << std::endl;
+            // std::cout << "Adding a new pull packet to the database" << std::endl;
 
             try {
                 std::unique_ptr<sql::PreparedStatement> stmnt(conn->prepareStatement("INSERT INTO downPackets (imme, tmst, tmms, freq, rfch, powe, modu, datr, codr, fdev, ipol, prea, size, data, ncrc) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
@@ -211,7 +212,6 @@ namespace lorareforwarder::database {
                 std::cerr << "Error inserting new pull packet: " << e.what() << std::endl;
             }
 
-            delete packet;
             return;
         }
     }

@@ -2,18 +2,12 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <iostream>
-#include <errno.h>
-
-#include <signal.h>
 #include <stdlib.h>
-
-#include <iostream>
 
 #include "dotenv.h"
 
 #include "server/server.hpp"
 #include "database/database.hpp"
-#include "common/common.hpp"
 using namespace lorareforwarder;
 
 int main(int argc, char const *argv[]) {
@@ -32,10 +26,10 @@ int main(int argc, char const *argv[]) {
     bool debug = dotenv["DEBUG"] == "true" ? true : false;
 
     // DEBUG
-    if(debug) {
-        std::cout << dotenv["MARIADB_SERVER_ADDR"] << " " << dotenv["MARIADB_SERVER_USERNAME"] << " " << dotenv["MARIADB_SERVER_PWD"] << " " << dotenv["MARIADB_SERVER_DBNAME"] << " " << mariadbServerPort << std::endl;
-        std::cout << dotenv["NETWORK_SERVER_ADDR"] << " " << networkServerPort << std::endl;
-    }
+    // if(debug) {
+    //     std::cout << dotenv["MARIADB_SERVER_ADDR"] << " " << dotenv["MARIADB_SERVER_USERNAME"] << " " << dotenv["MARIADB_SERVER_PWD"] << " " << dotenv["MARIADB_SERVER_DBNAME"] << " " << mariadbServerPort << std::endl;
+    //     std::cout << dotenv["NETWORK_SERVER_ADDR"] << " " << networkServerPort << std::endl;
+    // }
 
     database::Database database(dotenv["MARIADB_SERVER_ADDR"], dotenv["MARIADB_SERVER_USERNAME"], dotenv["MARIADB_SERVER_PWD"], dotenv["MARIADB_SERVER_DBNAME"], mariadbServerPort, debug);
     server::LoRaServer server(serverPort, database, dotenv["NETWORK_SERVER_ADDR"], networkServerPort, debug);
