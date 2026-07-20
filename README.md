@@ -41,3 +41,12 @@ Run the project on Docker:
 docker-compose up -d
 ```
 
+## Cite work
+Dataset for the paper "Why Not Collect While Forwarding? Transparent LoRaWAN Traffic Logging for Dataset Generation", in IEEE SWC 2026.
+
+The proceedings are not yet available online, they will be available in the next weeks.
+
+Feel free to email pietro.spadaccino \[at\] uniroma1.it to have an early access version of the publication.
+
+
+
