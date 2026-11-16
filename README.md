@@ -41,12 +41,22 @@ Run the project on Docker:
 docker-compose up -d
 ```
 
+## Example of collected dataset
+
+Over the course of more than a year, the software was deployed and a dataset of packets has been stored, available at: https://doi.org/10.5281/zenodo.21457870
+
 ## Cite work
-Dataset for the paper "Why Not Collect While Forwarding? Transparent LoRaWAN Traffic Logging for Dataset Generation", in IEEE SWC 2026.
-
-The proceedings are not yet available online, they will be available in the next weeks.
-
-Feel free to email pietro.spadaccino \[at\] uniroma1.it to have an early access version of the publication.
-
+Dataset for the paper "Why Not Collect While Forwarding? Transparent LoRaWAN Traffic Logging for Dataset Generation", presented at IEEE SWC 2026.
+```
+@INPROCEEDINGS{11763803,
+  author={Spadaccino, Pietro and Hedfif, Yasmine and Locatelli, Pierluigi and Cattai, Tiziana and Casalbore, Marco and Panella, Massimo and Cuomo, Francesca},
+  booktitle={2026 IEEE Smart World Congress (SWC)}, 
+  title={Why Not Collect While Forwarding? Transparent LoRaWAN Traffic Logging for Dataset Generation}, 
+  year={2026},
+  volume={},
+  number={},
+  pages={47-50},
+  doi={10.1109/SWC69865.2026.11763803}}
+```
 
 
